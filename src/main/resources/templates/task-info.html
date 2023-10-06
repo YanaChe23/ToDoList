@@ -9,8 +9,17 @@
 <h1>Form</h1>
 <form action="#" th:action="@{/save}" th:object="${task}">
     <p>Description: <input type="text" th:field="*{description}" /></p>
-    <p>Term: <input type="text" th:field="*{term}" /></p>
-    <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+    <p> Task deadline: <select th:field="*{deadline}">
+        <option value="today">Today</option>
+        <option value="week">This week</option>
+        <option value="someday">Some day</option>
+    </select>
+    </p>
+    <p>
+        <input type="submit" value="Submit" />
+        <input type="button" value="Main page" onclick="window.location.href='/'"/>
+    </p>
 </form>
+
 </body>
 </html>

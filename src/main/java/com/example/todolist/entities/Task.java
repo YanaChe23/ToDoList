@@ -21,13 +21,19 @@ public class Task {
     private int userId;
     @Column(name="description")
     private String description;
-    @Column(name="term")
-    private int term;
+    @Column(name="deadline")
+    private Deadline deadline;
     public Task() {
     }
-    public Task(int userId, String description, int term) {
+    public Task(int userId, String description, Deadline deadline) {
         this.userId = userId;
         this.description = description;
-        this.term = term;
+        this.deadline = deadline;
+    }
+    enum Deadline {
+        today,
+        week,
+        someday
     }
 }
+

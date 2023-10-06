@@ -17,14 +17,8 @@ public class TasksController {
     @Autowired
     TaskServiceImpl taskServiceImpl;
 
-    @GetMapping("/test")
+    @GetMapping("/")
     public String showMainPage() {
-        Task task = new Task();
-        task.setUserId(1);
-        task.setDescription("Play ps");
-        task.setTerm(2);
-        System.out.println("!!!!!!!! " + task);
-        taskServiceImpl.saveTask(task);
         return "greeting";
     }
 
@@ -44,10 +38,15 @@ public class TasksController {
     @RequestMapping("/save")
     public String saveTask(@ModelAttribute("task")Task task) {
         task.setUserId(1);
-        System.out.println("!!!!!!!! " + task);
         taskServiceImpl.saveTask(task);
         return "redirect:/all";
     }
+
+//    @RequestMapping("/filterByDeadline")
+//    public String filterTasksByDeadline(Model model) {
+//        System.out.println("!!!!!!!!!!!!!!!!!!!!!deadline");
+//        return "redirect:/all";
+//    }
 }
 
 

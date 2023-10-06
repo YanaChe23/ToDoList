@@ -1,6 +1,4 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<%@ page contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -17,13 +15,17 @@
                     <th>Task</th>
                     <th>When should be done</th>
                 </tr>
-            <c:forEach var="task" items="${tasks}">
-                <tr>
-                    <td>${task.description}</td>
-                    <td>${task.term}</td>
-                </tr>
-            </c:forEach>
+            <tr th:each="task : ${tasks}">
+                <td th:text="${task.description}"></td>
+                <td th:text="${task.deadline}"></td>
+            </tr>
         </table>
+
+
         <input type="button" value="Add a task" onclick="window.location.href='add'"/>
+        <input type="button" value="Main page" onclick="window.location.href='/'"/>
+<!--        <input type="button" value="Show today's tasks" onclick="window.location.href='/'"/>-->
+<!--        <input type="button" value="Show week's tasks" onclick="window.location.href='/'"/>-->
+<!--        <input type="button" value="Show someday tasks" onclick="window.location.href='/'"/>-->
     </body>
 </html>
