@@ -1,0 +1,29 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<%@ page contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            table, th, td{border: 1px solid black}
+            th{background-color: lavender}
+        </style>
+    </head>
+
+    <body>
+        <h2>All tasks</h2>
+        <table>
+                <tr>
+                    <th>Task</th>
+                    <th>When should be done</th>
+                </tr>
+            <c:forEach var="task" items="${tasks}">
+                <tr>
+                    <td>${task.description}</td>
+                    <td>${task.term}</td>
+                </tr>
+            </c:forEach>
+        </table>
+        <input type="button" value="Add a task" onclick="window.location.href='add'"/>
+    </body>
+</html>
