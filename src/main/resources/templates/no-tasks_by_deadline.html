@@ -2,7 +2,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<h1>Form</h1>
+<h1> No tasks found. You can add a new task. </h1>
 <form action="#" th:action="@{/save}" th:object="${task}">
     <p>Description: <input type="text" th:field="*{description}" /></p>
     <p> Task deadline: <select th:field="*{deadline}">
@@ -14,6 +14,7 @@
     <p>
         <input type="submit" value="Submit" />
     </p>
+    <input type="button" value="Show all tasks" onclick="window.location.href='all'"/>
 </form>
 
 </body>

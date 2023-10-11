@@ -173,6 +173,21 @@ class TasksControllerTest {
         assertEquals(elements.get(0).ownText(), "Buy presents");
         assertEquals(elements.get(1).ownText(), "Someday");
     }
+    @Test
+    public void noTaskFoundTest() throws Exception {
+        taskService.deleteAllTasks();
+        this.mockMvc.perform(get("/all"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("no-tasks"));
+    }
 
-
+    @Test
+    public void noTaskFoundByDeadlineTest() throws Exception {
+        taskService.deleteAllTasks();
+        this.mockMvc.perform(get("/selectTasksForSomeday"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("no-tasks_by_deadline"));
+    }
 }

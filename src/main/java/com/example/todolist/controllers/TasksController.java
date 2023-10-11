@@ -27,8 +27,15 @@ public class TasksController {
 
     @GetMapping("/all")
     public String getAllTasks(Model model) {
-        model.addAttribute("tasks", taskServiceImpl.getAllTask());
-        return "all-tasks";
+        List<Task> tasks = taskServiceImpl.getAllTask();
+        if (tasks.size() > 0) {
+            model.addAttribute("tasks", tasks);
+            return "all-tasks";
+        } else {
+            Task task = new Task();
+            model.addAttribute("task", task);
+            return "no-tasks";
+        }
     }
 
     @RequestMapping("/add")
@@ -47,20 +54,29 @@ public class TasksController {
 
     @RequestMapping("/selectTasksForToday")
     public String returnTasksForToday(Model model) {
-        model.addAttribute("tasks", filterTasksByDeadline(Deadline.today));
-        return "today-tasks";
+        return pickPageToReturn(model, Deadline.today, "today-tasks");
     }
 
     @RequestMapping("/selectTasksForWeek")
     public String returnTasksForWeek(Model model) {
-        model.addAttribute("tasks", filterTasksByDeadline(Deadline.week));
-        return "week-tasks";
+        return pickPageToReturn(model, Deadline.week, "week-tasks");
     }
 
     @RequestMapping("/selectTasksForSomeday")
     public String returnTasksForSomeday(Model model) {
-        model.addAttribute("tasks", filterTasksByDeadline(Deadline.someday));
-        return "someday-tasks";
+        return pickPageToReturn(model, Deadline.someday, "someday-tasks");
+    }
+
+    private String pickPageToReturn(Model model, Deadline deadline, String pageWithTasks) {
+        List<Task> tasks = filterTasksByDeadline(deadline);
+        if (tasks.size() > 0) {
+            model.addAttribute("tasks", tasks);
+            return pageWithTasks;
+        } else {
+            Task task = new Task();
+            model.addAttribute("task", task);
+            return "no-tasks_by_deadline";
+        }
     }
 
     private List<Task> filterTasksByDeadline(Deadline deadline) {
