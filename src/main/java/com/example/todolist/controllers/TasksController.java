@@ -18,8 +18,8 @@ public class TasksController {
     TaskServiceImpl taskServiceImpl;
 
     @GetMapping("/")
-    public String showMainPage() {
-        return "greeting";
+    public String redirectFromMainPage() {
+        return "redirect:/all";
     }
 
     @GetMapping("/all")

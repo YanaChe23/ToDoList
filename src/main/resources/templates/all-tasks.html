@@ -16,8 +16,8 @@
                     <th>When should be done</th>
                 </tr>
             <tr th:each="task : ${tasks}">
-                <td th:text="${task.description}"></td>
-                <td th:text="${task.deadline}"></td>
+                <td th:text="${task.getDescription()}"></td>
+                <td th:text="${task.getDeadline().capitalized}"></td>
             </tr>
         </table>
 

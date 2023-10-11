@@ -30,10 +30,5 @@ public class Task {
         this.description = description;
         this.deadline = deadline;
     }
-    enum Deadline {
-        today,
-        week,
-        someday
-    }
 }
 

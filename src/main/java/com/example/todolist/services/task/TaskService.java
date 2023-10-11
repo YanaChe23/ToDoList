@@ -6,8 +6,11 @@ import com.example.todolist.entities.User;
 import java.util.List;
 
 public interface TaskService {
-    public List<Task> getAllTask();
-    public void saveTask(Task Task);
-    public Task getTask(int id);
-    public void deleteTask(int id);
+    List<Task> getAllTask();
+    void saveTask(Task Task);
+    Task getTask(int id);
+    void deleteTask(int id);
+    void deleteAllTasks();
+    List<Task> findAllTasks();
+
 }
