@@ -1,3 +1,4 @@
+// TODO behaviour for empty tables
 package com.example.todolist;
 
 import org.springframework.boot.SpringApplication;

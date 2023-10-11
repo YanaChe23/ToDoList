@@ -1,5 +1,6 @@
 package com.example.todolist.controllers;
 
+import com.example.todolist.entities.Deadline;
 import com.example.todolist.entities.Task;
 import com.example.todolist.services.task.TaskServiceImpl;
 import com.example.todolist.services.user.UserServiceImpl;
@@ -9,6 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 @Controller
 public class TasksController {
@@ -42,11 +45,27 @@ public class TasksController {
         return "redirect:/all";
     }
 
-//    @RequestMapping("/filterByDeadline")
-//    public String filterTasksByDeadline(Model model) {
-//        System.out.println("!!!!!!!!!!!!!!!!!!!!!deadline");
-//        return "redirect:/all";
-//    }
+    @RequestMapping("/selectTasksForToday")
+    public String returnTasksForToday(Model model) {
+        model.addAttribute("tasks", filterTasksByDeadline(Deadline.today));
+        return "today-tasks";
+    }
+
+    @RequestMapping("/selectTasksForWeek")
+    public String returnTasksForWeek(Model model) {
+        model.addAttribute("tasks", filterTasksByDeadline(Deadline.week));
+        return "week-tasks";
+    }
+
+    @RequestMapping("/selectTasksForSomeday")
+    public String returnTasksForSomeday(Model model) {
+        model.addAttribute("tasks", filterTasksByDeadline(Deadline.someday));
+        return "someday-tasks";
+    }
+
+    private List<Task> filterTasksByDeadline(Deadline deadline) {
+        return taskServiceImpl.findTasksByDeadline(deadline);
+    }
 }
 
 

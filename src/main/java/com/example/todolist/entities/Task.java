@@ -22,6 +22,7 @@ public class Task {
     @Column(name="description")
     private String description;
     @Column(name="deadline")
+    @Enumerated(EnumType.STRING)
     private Deadline deadline;
     public Task() {
     }

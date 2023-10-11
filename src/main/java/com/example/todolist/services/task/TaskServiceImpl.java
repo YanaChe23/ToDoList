@@ -1,5 +1,6 @@
 package com.example.todolist.services.task;
 
+import com.example.todolist.entities.Deadline;
 import com.example.todolist.entities.Task;
 
 import com.example.todolist.repositories.TaskRepository;
@@ -43,4 +44,10 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> findAllTasks() {
         return taskRepository.findAll();
     }
+    @Override
+    public List<Task> findTasksByDeadline(Deadline deadline) {
+        return taskRepository.findByDeadline(deadline);
+    }
+
+
 }

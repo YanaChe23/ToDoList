@@ -22,6 +22,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.PostgreSQLContainer;
 import com.example.todolist.entities.Deadline;
 
+import java.io.IOException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -120,4 +122,57 @@ class TasksControllerTest {
         assertEquals(elements.get(2).ownText(), "Call Bob");
         assertEquals(elements.get(3).ownText(), "Week");
     }
+
+    @Test
+    public void showTasksByTodayDeadlineTest() throws IOException {
+        Task callTask = new Task(1, "Call Maria", Deadline.week);
+        Task dantistTask = new Task(1, "Make an appointment with Dr.Robertson", Deadline.week);
+        Task presentTask =  new Task(1, "Buy presents", Deadline.someday);
+        taskService.saveTask(callTask);
+        taskService.saveTask(dantistTask);
+        taskService.saveTask(presentTask);
+
+        Document doc = Jsoup.connect(baseURI + "/selectTasksForToday").get();
+        Elements elements = doc.getElementsByTag("td");
+
+        assertEquals(elements.size(), 2);
+        assertEquals(elements.get(0).ownText(), "Send an e-mail");
+        assertEquals(elements.get(1).ownText(), "Today");
+    }
+
+    @Test
+    public void showTasksByWeekDeadlineTest() throws IOException {
+        Task callTask = new Task(1, "Call Maria", Deadline.week);
+        Task dantistTask = new Task(1, "Make an appointment with Dr.Robertson", Deadline.week);
+        Task presentTask =  new Task(1, "Buy presents", Deadline.someday);
+        taskService.saveTask(callTask);
+        taskService.saveTask(dantistTask);
+        taskService.saveTask(presentTask);
+
+        Document doc = Jsoup.connect(baseURI + "/selectTasksForWeek").get();
+        Elements elements = doc.getElementsByTag("td");
+        assertEquals(elements.size(), 4);
+        assertEquals(elements.get(0).ownText(), "Call Maria");
+        assertEquals(elements.get(1).ownText(), "Week");
+        assertEquals(elements.get(2).ownText(), "Make an appointment with Dr.Robertson");
+        assertEquals(elements.get(3).ownText(), "Week");
+    }
+
+    @Test
+    public void showTasksBySomedayDeadlineTest() throws IOException {
+        Task callTask = new Task(1, "Call Maria", Deadline.week);
+        Task dantistTask = new Task(1, "Make an appointment with Dr.Robertson", Deadline.week);
+        Task presentTask =  new Task(1, "Buy presents", Deadline.someday);
+        taskService.saveTask(callTask);
+        taskService.saveTask(dantistTask);
+        taskService.saveTask(presentTask);
+
+        Document doc = Jsoup.connect(baseURI + "/selectTasksForSomeday").get();
+        Elements elements = doc.getElementsByTag("td");
+        assertEquals(elements.size(), 2);
+        assertEquals(elements.get(0).ownText(), "Buy presents");
+        assertEquals(elements.get(1).ownText(), "Someday");
+    }
+
+
 }

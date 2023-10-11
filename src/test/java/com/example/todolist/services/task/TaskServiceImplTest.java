@@ -80,4 +80,17 @@ class TaskServiceImplTest {
         Task task = taskService.getTask(currentIdOfTask);
         assertEquals(task.getDescription(), "Send an e-mail");
     }
+
+    @Test
+    public void findTasksByDeadlineTest() {
+        Task callTask = new Task(1, "Call Bob", Deadline.week);
+        Task dantistTask = new Task(1, "Make an appointment with Dr.Robertson", Deadline.week);
+        Task presentTask =  new Task(1, "Buy presents", Deadline.someday);
+        taskService.saveTask(callTask);
+        taskService.saveTask(dantistTask);
+        taskService.saveTask(presentTask);
+        assertEquals(taskService.findTasksByDeadline(Deadline.today).size(), 1);
+        assertEquals(taskService.findTasksByDeadline(Deadline.week).size(), 2);
+        assertEquals(taskService.findTasksByDeadline(Deadline.someday).size(), 1);
+    }
 }
