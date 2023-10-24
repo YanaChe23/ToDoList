@@ -3,6 +3,7 @@ package com.example.todolist.services.task;
 import com.example.todolist.entities.Deadline;
 import com.example.todolist.entities.Task;
 
+import com.example.todolist.exceptions.task.TaskNotFoundException;
 import com.example.todolist.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,9 +26,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task getTask(int id) {
-        Optional<Task> task = taskRepository.findById(id);
-        if (task.isPresent()) return task.get();
-        return null;
+        Optional<Task> optionalTask = taskRepository.findById(id);
+        optionalTask.orElseThrow(() -> new TaskNotFoundException("Could not find a task with id " + id));
+        return optionalTask.get();
     }
 
     @Override
@@ -44,6 +45,7 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> findAllTasks() {
         return taskRepository.findAll();
     }
+
     @Override
     public List<Task> findTasksByDeadline(Deadline deadline) {
         return taskRepository.findByDeadline(deadline);

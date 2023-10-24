@@ -21,6 +21,9 @@
             <tr th:each="task : ${tasks}">
                 <td th:text="${task.getDescription()}"></td>
                 <td th:text="${task.getDeadline().capitalized}"></td>
+                <td>
+                    <input type="button" value="Edit" th:attr="onclick=|window.location='edit?id=' + ${task.getId}|" />
+                </td>
             </tr>
         </table>
         <input type="button" value="Add a task" onclick="window.location.href='add'"/>

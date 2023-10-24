@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -81,6 +82,22 @@ public class TasksController {
 
     private List<Task> filterTasksByDeadline(Deadline deadline) {
         return taskServiceImpl.findTasksByDeadline(deadline);
+    }
+
+    @GetMapping("/edit")
+    public String editTask(@RequestParam Integer id, Model model) {
+        Task task = taskServiceImpl.getTask(id);
+        model.addAttribute("task", task);
+        return "edit-task-info";
+    }
+
+    @GetMapping("/saveEdited")
+    public String saveEditedTask(@ModelAttribute("task")Task editedTask) {
+        Task task = taskServiceImpl.getTask(editedTask.getId());
+        task.setDescription(editedTask.getDescription());
+        task.setDeadline(editedTask.getDeadline());
+        taskServiceImpl.saveTask(task);
+        return "redirect:/all";
     }
 }
 
