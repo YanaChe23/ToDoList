@@ -31,7 +31,7 @@ public class TasksController {
         List<Task> tasks = taskServiceImpl.getAllTask();
         if (tasks.size() > 0) {
             model.addAttribute("tasks", tasks);
-            return "all-tasks";
+            return "list-of-tasks";
         } else {
             Task task = new Task();
             model.addAttribute("task", task);
@@ -53,36 +53,25 @@ public class TasksController {
         return "redirect:/all";
     }
 
-    @RequestMapping("/selectTasksForToday")
-    public String returnTasksForToday(Model model) {
-        return pickPageToReturn(model, Deadline.today, "today-tasks");
-    }
-
-    @RequestMapping("/selectTasksForWeek")
-    public String returnTasksForWeek(Model model) {
-        return pickPageToReturn(model, Deadline.week, "week-tasks");
-    }
-
-    @RequestMapping("/selectTasksForSomeday")
-    public String returnTasksForSomeday(Model model) {
-        return pickPageToReturn(model, Deadline.someday, "someday-tasks");
-    }
-
-    private String pickPageToReturn(Model model, Deadline deadline, String pageWithTasks) {
-        List<Task> tasks = filterTasksByDeadline(deadline);
-        if (tasks.size() > 0) {
-            model.addAttribute("tasks", tasks);
-            return pageWithTasks;
-        } else {
-            Task task = new Task();
-            model.addAttribute("task", task);
-            return "no-tasks_by_deadline";
+    @RequestMapping("/selectTasksByDeadline")
+        public String returnTasksByDeadline(Model model, @RequestParam String buttonId) {
+        try {
+            Deadline deadline = Deadline.valueOf(buttonId);
+            List<Task> tasks = taskServiceImpl.findTasksByDeadline(deadline);
+            if (tasks.size() > 0) {
+                model.addAttribute("tasks", tasks);
+                return "list-of-tasks";
+            } else {
+                Task task = new Task();
+                model.addAttribute("task", task);
+                return "no-tasks-by-deadline";
+            }
+        } catch (Exception e) {
+            System.err.println("Error: " + e);
+            return "redirect:/all";
         }
     }
 
-    private List<Task> filterTasksByDeadline(Deadline deadline) {
-        return taskServiceImpl.findTasksByDeadline(deadline);
-    }
 
     @GetMapping("/edit")
     public String editTask(@RequestParam Integer id, Model model) {

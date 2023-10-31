@@ -10,10 +10,10 @@
 
     <body>
         <h2>All tasks</h2>
-        <input type="button" value="Show tasks for today" onclick="window.location.href='selectTasksForToday'"/>
-        <input type="button" value="Show tasks for week" onclick="window.location.href='selectTasksForWeek'"/>
-        <input type="button" value="Show tasks for someday" onclick="window.location.href='selectTasksForSomeday'"/>
-        <table>
+        <input type="button" value="Show tasks for today" onclick="handleClick('today')"/>
+        <input type="button" value="Show tasks for week" onclick="handleClick('week')"/>
+        <input type="button" value="Show tasks for someday" onclick="handleClick('someday')"/>
+         <table>
                 <tr>
                     <th>Task</th>
                     <th>When should be done</th>
@@ -28,4 +28,11 @@
         </table>
         <input type="button" value="Add a task" onclick="window.location.href='add'"/>
     </body>
+    <script>
+        function handleClick(buttonId) {
+            var currentUrl = window.location.origin;
+            var newUrl = currentUrl + "/selectTasksByDeadline?buttonId=" + buttonId
+            window.location.href = newUrl;
+        }
+    </script>
 </html>
