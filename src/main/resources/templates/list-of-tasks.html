@@ -9,7 +9,8 @@
     </head>
 
     <body>
-        <h2>All tasks</h2>
+        <h2>Tasks</h2>
+        <input type="button" value="Show all tasks" onclick="window.location.href='all'"/>
         <input type="button" value="Show tasks for today" onclick="handleClick('today')"/>
         <input type="button" value="Show tasks for week" onclick="handleClick('week')"/>
         <input type="button" value="Show tasks for someday" onclick="handleClick('someday')"/>
@@ -22,7 +23,10 @@
                 <td th:text="${task.getDescription()}"></td>
                 <td th:text="${task.getDeadline().capitalized}"></td>
                 <td>
-                    <input type="button" value="Edit" th:attr="onclick=|window.location='edit?id=' + ${task.getId}|" />
+                    <input type="button" value="Edit" th:attr="onclick=|window.location='editTask?id=' + ${task.getId}|" />
+                </td>
+                <td>
+                    <input type="button" value="Delete" th:attr="onclick=|deleteTask(' + ${task.id} + ')|"/>
                 </td>
             </tr>
         </table>
@@ -30,9 +34,30 @@
     </body>
     <script>
         function handleClick(buttonId) {
-            var currentUrl = window.location.origin;
-            var newUrl = currentUrl + "/selectTasksByDeadline?buttonId=" + buttonId
+            const currentUrl = window.location.origin;
+            const newUrl = currentUrl + "/selectTasksByDeadline?buttonId=" + buttonId
             window.location.href = newUrl;
         }
     </script>
+
+    <script>
+        function deleteTask(id) {
+            fetch('/deleteTask?id=' + id, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Request failed.');
+                    }
+                    console.log('Task deleted successfully');
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error('Error deleting task:', error);
+                });
+        }
+
+    </script>
+
+
 </html>

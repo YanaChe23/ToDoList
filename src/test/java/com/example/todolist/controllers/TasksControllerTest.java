@@ -98,9 +98,18 @@ class TasksControllerTest {
         Document doc = Jsoup.connect(baseURI + "/all").get();
         Elements elements = doc.getElementsByTag("td");
 
-        assertEquals(elements.size(), 2);
+        assertEquals(elements.size(), 3);
         assertEquals(elements.get(0).ownText(), "Send an e-mail");
         assertEquals(elements.get(1).ownText(), "Today");
+    }
+
+    @Test
+    public void noTaskFoundTest() throws Exception {
+        taskService.deleteAllTasks();
+        this.mockMvc.perform(get("/all"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("no-tasks"));
     }
 
     @Test
@@ -114,13 +123,14 @@ class TasksControllerTest {
     @Test
     public void saveTaskTest() throws Exception {
         Document doc = Jsoup.connect(baseURI + "/save?description=Call Bob&deadline=week").get();
+        System.out.println(doc);
         Elements elements = doc.getElementsByTag("td");
         // check that there are 4 elements in td tag of html page: 2 tasks and 2 deadlines
-        assertEquals(elements.size(), 4);
+        assertEquals(elements.size(), 6);
         assertEquals(elements.get(0).ownText(), "Send an e-mail");
         assertEquals(elements.get(1).ownText(), "Today");
-        assertEquals(elements.get(2).ownText(), "Call Bob");
-        assertEquals(elements.get(3).ownText(), "Week");
+        assertEquals(elements.get(3).ownText(), "Call Bob");
+        assertEquals(elements.get(4).ownText(), "Week");
     }
 
     @Test
@@ -132,10 +142,10 @@ class TasksControllerTest {
         taskService.saveTask(dantistTask);
         taskService.saveTask(presentTask);
 
-        Document doc = Jsoup.connect(baseURI + "/selectTasksForToday").get();
+        Document doc = Jsoup.connect(baseURI + "/selectTasksByDeadline?buttonId=today").get();
         Elements elements = doc.getElementsByTag("td");
 
-        assertEquals(elements.size(), 2);
+        assertEquals(elements.size(), 3);
         assertEquals(elements.get(0).ownText(), "Send an e-mail");
         assertEquals(elements.get(1).ownText(), "Today");
     }
@@ -149,13 +159,13 @@ class TasksControllerTest {
         taskService.saveTask(dantistTask);
         taskService.saveTask(presentTask);
 
-        Document doc = Jsoup.connect(baseURI + "/selectTasksForWeek").get();
+        Document doc = Jsoup.connect(baseURI + "/selectTasksByDeadline?buttonId=week").get();
         Elements elements = doc.getElementsByTag("td");
-        assertEquals(elements.size(), 4);
+        assertEquals(elements.size(), 6);
         assertEquals(elements.get(0).ownText(), "Call Maria");
         assertEquals(elements.get(1).ownText(), "Week");
-        assertEquals(elements.get(2).ownText(), "Make an appointment with Dr.Robertson");
-        assertEquals(elements.get(3).ownText(), "Week");
+        assertEquals(elements.get(3).ownText(), "Make an appointment with Dr.Robertson");
+        assertEquals(elements.get(4).ownText(), "Week");
     }
 
     @Test
@@ -167,27 +177,20 @@ class TasksControllerTest {
         taskService.saveTask(dantistTask);
         taskService.saveTask(presentTask);
 
-        Document doc = Jsoup.connect(baseURI + "/selectTasksForSomeday").get();
+        Document doc = Jsoup.connect(baseURI + "/selectTasksByDeadline?buttonId=someday").get();
         Elements elements = doc.getElementsByTag("td");
-        assertEquals(elements.size(), 2);
+        assertEquals(elements.size(), 3);
         assertEquals(elements.get(0).ownText(), "Buy presents");
         assertEquals(elements.get(1).ownText(), "Someday");
     }
-    @Test
-    public void noTaskFoundTest() throws Exception {
-        taskService.deleteAllTasks();
-        this.mockMvc.perform(get("/all"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(view().name("no-tasks"));
-    }
+
 
     @Test
     public void noTaskFoundByDeadlineTest() throws Exception {
         taskService.deleteAllTasks();
-        this.mockMvc.perform(get("/selectTasksForSomeday"))
+        this.mockMvc.perform(get("/selectTasksByDeadline?buttonId=today"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(view().name("no-tasks_by_deadline"));
+                .andExpect(view().name("no-tasks-by-deadline"));
     }
 }

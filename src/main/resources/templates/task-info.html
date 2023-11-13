@@ -12,9 +12,29 @@
     </select>
     </p>
     <p>
-        <input type="submit" value="Submit" />
+        <input type="button" value="Save" th:attr="onclick=|saveUpdatedTask()|"/>
     </p>
 </form>
 
 </body>
+
+<script>
+    function saveUpdatedTask() {
+        console.log("test")
+        fetch('/saveUpdatedTask', {
+            method: 'PUT'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Request failed.');
+                }
+                console.log('Task edited successfully');
+                window.location.href = window.location.origin;
+            })
+            .catch(error => {
+                console.error('Error editing task:', error);
+            });
+    }
+
+</script>
 </html>

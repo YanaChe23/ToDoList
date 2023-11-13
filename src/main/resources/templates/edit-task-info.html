@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <h1>Form</h1>
-<form action="#" th:action="@{/saveEdited}" th:object="${task}">
+<form id="taskForm" action="#" th:action="@{/saveEdited}" th:object="${task}">
     <p>Description: <input type="text" th:field="*{description}" required/></p>
     <p> Task deadline: <select th:field="*{deadline}">
         <option value="today">Today</option>
@@ -13,9 +13,32 @@
         <input type="hidden" name="id" th:field="*{id}"/>
     </p>
     <p>
-        <input type="submit" value="Submit" />
+        <input type="button" value="Save" th:attr="onclick=|saveUpdatedTask()|"/>
     </p>
 </form>
 
 </body>
+
+<script>
+    function saveUpdatedTask() {
+        const form = document.getElementById('taskForm');
+        const formData = new FormData(form);
+
+        fetch('/saveEdited', {
+            method: 'PUT',
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Request failed with status: ' + response.status);
+                }
+                console.log('Task edited successfully');
+                window.location.href = window.location.origin;
+            })
+            .catch(error => {
+                console.error('Error editing task:', error);
+            });
+    }
+</script>
+
 </html>

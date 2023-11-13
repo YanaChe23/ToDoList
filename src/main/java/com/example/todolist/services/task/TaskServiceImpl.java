@@ -33,7 +33,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void deleteTask(int id) {
-
+        taskRepository.deleteById(id);
     }
 
     @Override

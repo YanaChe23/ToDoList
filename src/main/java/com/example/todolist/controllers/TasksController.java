@@ -5,12 +5,11 @@ import com.example.todolist.entities.Task;
 import com.example.todolist.services.task.TaskServiceImpl;
 import com.example.todolist.services.user.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -39,22 +38,42 @@ public class TasksController {
         }
     }
 
-    @RequestMapping("/add")
+    @GetMapping("/add")
     public String addNewTask(Model model) {
         Task task = new Task();
         model.addAttribute("task", task);
         return "task-info";
     }
 
-    @RequestMapping("/save")
+    @PostMapping("/save")
     public String saveTask(@ModelAttribute("task")Task task) {
         task.setUserId(1);
         taskServiceImpl.saveTask(task);
         return "redirect:/all";
     }
 
-    @RequestMapping("/selectTasksByDeadline")
-        public String returnTasksByDeadline(Model model, @RequestParam String buttonId) {
+    @GetMapping("/editTask")
+    public String editTask(@RequestParam int id, Model model) {
+        Task task = taskServiceImpl.getTask(id);
+        model.addAttribute("task", task);
+        return "edit-task-info";
+    }
+
+    @PutMapping("/saveEdited")
+    public ResponseEntity<?> saveEditedTask(@ModelAttribute("task")Task editedTask) {
+        try {
+            Task task = taskServiceImpl.getTask(editedTask.getId());
+            task.setDescription(editedTask.getDescription());
+            task.setDeadline(editedTask.getDeadline());
+            taskServiceImpl.saveTask(task);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error message");
+        }
+    }
+
+    @GetMapping("/showTasksByDeadline")
+    public String showTasksByDeadline(Model model, @RequestParam String buttonId) {
         try {
             Deadline deadline = Deadline.valueOf(buttonId);
             List<Task> tasks = taskServiceImpl.findTasksByDeadline(deadline);
@@ -64,7 +83,7 @@ public class TasksController {
             } else {
                 Task task = new Task();
                 model.addAttribute("task", task);
-                return "no-tasks-by-deadline";
+                return "no-tasks";
             }
         } catch (Exception e) {
             System.err.println("Error: " + e);
@@ -72,21 +91,14 @@ public class TasksController {
         }
     }
 
-
-    @GetMapping("/edit")
-    public String editTask(@RequestParam Integer id, Model model) {
-        Task task = taskServiceImpl.getTask(id);
-        model.addAttribute("task", task);
-        return "edit-task-info";
-    }
-
-    @GetMapping("/saveEdited")
-    public String saveEditedTask(@ModelAttribute("task")Task editedTask) {
-        Task task = taskServiceImpl.getTask(editedTask.getId());
-        task.setDescription(editedTask.getDescription());
-        task.setDeadline(editedTask.getDeadline());
-        taskServiceImpl.saveTask(task);
-        return "redirect:/all";
+    @DeleteMapping("/deleteTask")
+    public ResponseEntity<?> deleteTask(@RequestParam int id) {
+        try {
+            taskServiceImpl.deleteTask(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error message");
+        }
     }
 }
 
