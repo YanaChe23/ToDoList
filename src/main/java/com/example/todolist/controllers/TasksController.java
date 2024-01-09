@@ -20,86 +20,48 @@ public class TasksController {
     @Autowired
     TaskServiceImpl taskServiceImpl;
 
-    @GetMapping("/")
-    public String redirectFromMainPage() {
-        return "redirect:/all";
+    @GetMapping("/allTasks")
+    public List<Task> getAllTasks() {
+        return taskServiceImpl.getAllTask();
     }
 
-    @GetMapping("/all")
-    public String getAllTasks(Model model) {
-        List<Task> tasks = taskServiceImpl.getAllTask();
-        if (tasks.size() > 0) {
-            model.addAttribute("tasks", tasks);
-            return "list-of-tasks";
-        } else {
-            Task task = new Task();
-            model.addAttribute("task", task);
-            return "no-tasks";
-        }
+
+    // TODO
+    @PostMapping("/addTask")
+    public Task saveTask(@RequestBody Task task) {
+        return taskServiceImpl.saveTask(task);
     }
 
-    @GetMapping("/add")
-    public String addNewTask(Model model) {
-        Task task = new Task();
-        model.addAttribute("task", task);
-        return "task-info";
-    }
-
-    @PostMapping("/save")
-    public String saveTask(@ModelAttribute("task")Task task) {
-        task.setUserId(1);
-        taskServiceImpl.saveTask(task);
-        return "redirect:/all";
-    }
-
-    @GetMapping("/editTask")
-    public String editTask(@RequestParam int id, Model model) {
-        Task task = taskServiceImpl.getTask(id);
-        model.addAttribute("task", task);
-        return "edit-task-info";
-    }
-
-    @PutMapping("/saveEdited")
-    public ResponseEntity<?> saveEditedTask(@ModelAttribute("task")Task editedTask) {
-        try {
-            Task task = taskServiceImpl.getTask(editedTask.getId());
-            task.setDescription(editedTask.getDescription());
-            task.setDeadline(editedTask.getDeadline());
-            taskServiceImpl.saveTask(task);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error message");
-        }
-    }
-
-    @GetMapping("/showTasksByDeadline")
-    public String showTasksByDeadline(Model model, @RequestParam String buttonId) {
-        try {
-            Deadline deadline = Deadline.valueOf(buttonId);
-            List<Task> tasks = taskServiceImpl.findTasksByDeadline(deadline);
-            if (tasks.size() > 0) {
-                model.addAttribute("tasks", tasks);
-                return "list-of-tasks";
-            } else {
-                Task task = new Task();
-                model.addAttribute("task", task);
-                return "no-tasks";
-            }
-        } catch (Exception e) {
-            System.err.println("Error: " + e);
-            return "redirect:/all";
-        }
+    @PatchMapping("/editTask")
+    public Task saveEditedTask(@RequestBody Task task) {
+        return taskServiceImpl.editTask(task);
     }
 
     @DeleteMapping("/deleteTask")
-    public ResponseEntity<?> deleteTask(@RequestParam int id) {
-        try {
-            taskServiceImpl.deleteTask(id);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error message");
-        }
+    public String deleteTask(@RequestParam int id) {
+        taskServiceImpl.deleteTask(id);
+        return "Deleted";
     }
+
+//    @GetMapping("/showTasksByDeadline")
+//    public String showTasksByDeadline(Model model, @RequestParam String buttonId) {
+//        try {
+//            Deadline deadline = Deadline.valueOf(buttonId);
+//            List<Task> tasks = taskServiceImpl.findTasksByDeadline(deadline);
+//            if (tasks.size() > 0) {
+//                model.addAttribute("tasks", tasks);
+//                return "list-of-tasks";
+//            } else {
+//                Task task = new Task();
+//                model.addAttribute("task", task);
+//                return "no-tasks";
+//            }
+//        } catch (Exception e) {
+//            System.err.println("Error: " + e);
+//            return "redirect:/all";
+//        }
+//    }
+
 }
 
 

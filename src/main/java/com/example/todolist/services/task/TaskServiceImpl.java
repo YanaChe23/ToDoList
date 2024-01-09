@@ -6,6 +6,8 @@ import com.example.todolist.entities.Task;
 import com.example.todolist.exceptions.task.TaskNotFoundException;
 import com.example.todolist.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,8 +22,17 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void saveTask(Task task) {
-        taskRepository.save(task);
+    public Task saveTask(Task task) {
+        task.setUserId(1);
+        return taskRepository.save(task);
+    }
+
+    @Override
+    public Task editTask(Task task) {
+        Task taskToEdit = getTask(task.getId());
+        taskToEdit.setDescription(task.getDescription());
+        taskToEdit.setDeadline(task.getDeadline());
+        return saveTask(task);
     }
 
     @Override

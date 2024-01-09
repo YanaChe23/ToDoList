@@ -1,0 +1,11 @@
+version: '3.8'
+name: to-do-list
+services:
+  db:
+    image: postgres:alpine
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: to-do-list
+    ports: [ '5438:5432' ]
