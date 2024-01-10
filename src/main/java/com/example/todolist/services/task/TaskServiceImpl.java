@@ -1,10 +1,12 @@
 package com.example.todolist.services.task;
 
+import com.example.todolist.dtos.TaskDTO;
 import com.example.todolist.entities.Deadline;
 import com.example.todolist.entities.Task;
 
 import com.example.todolist.exceptions.task.TaskNotFoundException;
 import com.example.todolist.repositories.TaskRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,36 +18,44 @@ import java.util.Optional;
 public class TaskServiceImpl implements TaskService {
     @Autowired
     private TaskRepository taskRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+    @Override
+    public Task saveTask(TaskDTO taskDTO) {
+        Task task = modelMapper.map(taskDTO, Task.class);
+        // TODO remove once auth is added
+        task.setUserId(1);
+        return taskRepository.save(task);
+    }
+
     @Override
     public List<Task> getAllTask() {
         return taskRepository.findAll();
     }
 
     @Override
-    public Task saveTask(Task task) {
-        task.setUserId(1);
-        return taskRepository.save(task);
-    }
-
-    @Override
-    public Task editTask(Task task) {
-        Task taskToEdit = getTask(task.getId());
-        taskToEdit.setDescription(task.getDescription());
-        taskToEdit.setDeadline(task.getDeadline());
-        return saveTask(task);
-    }
-
-    @Override
     public Task getTask(int id) {
         Optional<Task> optionalTask = taskRepository.findById(id);
-        optionalTask.orElseThrow(() -> new TaskNotFoundException("Could not find a task with id " + id));
+        optionalTask.orElseThrow(() -> new TaskNotFoundException(id));
         return optionalTask.get();
     }
 
     @Override
-    public void deleteTask(int id) {
+    public String deleteTask(int id) {
+        if (!taskRepository.existsById(id)) throw new TaskNotFoundException(id);
         taskRepository.deleteById(id);
+        return "Task with id=" + id + " is deleted.";
     }
+
+    //    @Override
+//    public Task editTask(Task task) {
+//        Task taskToEdit = getTask(task.getId());
+//        taskToEdit.setDescription(task.getDescription());
+//        taskToEdit.setDeadline(task.getDeadline());
+//        return saveTask(task);
+//    }
 
     @Override
     public void deleteAllTasks() {

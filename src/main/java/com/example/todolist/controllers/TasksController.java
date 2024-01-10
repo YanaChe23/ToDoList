@@ -1,47 +1,49 @@
 package com.example.todolist.controllers;
 
-import com.example.todolist.entities.Deadline;
+import com.example.todolist.dtos.TaskDTO;
 import com.example.todolist.entities.Task;
 import com.example.todolist.services.task.TaskServiceImpl;
 import com.example.todolist.services.user.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 public class TasksController {
+
     @Autowired
     UserServiceImpl userServiceImpl;
     @Autowired
     TaskServiceImpl taskServiceImpl;
+
+    @PostMapping("/addTask")
+    public Task saveTask(@RequestBody TaskDTO task) {
+        return taskServiceImpl.saveTask(task);
+    }
 
     @GetMapping("/allTasks")
     public List<Task> getAllTasks() {
         return taskServiceImpl.getAllTask();
     }
 
-
-    // TODO
-    @PostMapping("/addTask")
-    public Task saveTask(@RequestBody Task task) {
-        return taskServiceImpl.saveTask(task);
-    }
-
-    @PatchMapping("/editTask")
-    public Task saveEditedTask(@RequestBody Task task) {
-        return taskServiceImpl.editTask(task);
+    @GetMapping("/findTask")
+    public Task getTask(@RequestParam int id) {
+        return taskServiceImpl.getTask(id);
     }
 
     @DeleteMapping("/deleteTask")
     public String deleteTask(@RequestParam int id) {
-        taskServiceImpl.deleteTask(id);
-        return "Deleted";
+        return taskServiceImpl.deleteTask(id);
     }
+
+//      TODO
+//    @PatchMapping("/editTask")
+//    public Task saveEditedTask(@RequestBody Task task) {
+//        return taskServiceImpl.editTask(task);
+//    }
+//
+
 
 //    @GetMapping("/showTasksByDeadline")
 //    public String showTasksByDeadline(Model model, @RequestParam String buttonId) {

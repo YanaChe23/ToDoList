@@ -3,7 +3,8 @@ package com.example.todolist.exceptions.task;
 import com.example.todolist.exceptions.BaseTaskException;
 
 public class TaskNotFoundException extends BaseTaskException {
-    public TaskNotFoundException(String message) {
-        super(message);
+    private static final String errorMessage = "Could not find a task with id ";
+    public TaskNotFoundException(int id) {
+        super(errorMessage + id + ".");
     }
 }

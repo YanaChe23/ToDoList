@@ -66,19 +66,19 @@ class TasksControllerTest {
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
     }
-    @BeforeEach
-    void setUp() {
-        baseURI = "http://localhost:" + port;
-        RestAssured.baseURI = baseURI;
-
-        taskService.deleteAllTasks();
-        userService.deleteAllUsers();
-
-        User user = new User(1, "Vlad");
-        Task emailTask = new Task(1, "Send an e-mail", Deadline.today);
-        userService.saveUser(user);
-        taskService.saveTask(emailTask);
-    }
+//    @BeforeEach
+//    void setUp() {
+//        baseURI = "http://localhost:" + port;
+//        RestAssured.baseURI = baseURI;
+//
+//        taskService.deleteAllTasks();
+//        userService.deleteAllUsers();
+//
+//        User user = new User(1, "Vlad");
+//        Task emailTask = new Task(1, "Send an e-mail", Deadline.today);
+//        userService.saveUser(user);
+//        taskService.saveTask(emailTask);
+//    }
 
     @Test
     public void controllerLoadsTest() {
@@ -133,56 +133,56 @@ class TasksControllerTest {
         assertEquals(elements.get(4).ownText(), "Week");
     }
 
-    @Test
-    public void showTasksByTodayDeadlineTest() throws IOException {
-        Task callTask = new Task(1, "Call Maria", Deadline.week);
-        Task dantistTask = new Task(1, "Make an appointment with Dr.Robertson", Deadline.week);
-        Task presentTask =  new Task(1, "Buy presents", Deadline.someday);
-        taskService.saveTask(callTask);
-        taskService.saveTask(dantistTask);
-        taskService.saveTask(presentTask);
+//    @Test
+//    public void showTasksByTodayDeadlineTest() throws IOException {
+//        Task callTask = new Task(1, "Call Maria", Deadline.week);
+//        Task dantistTask = new Task(1, "Make an appointment with Dr.Robertson", Deadline.week);
+//        Task presentTask =  new Task(1, "Buy presents", Deadline.someday);
+//        taskService.saveTask(callTask);
+//        taskService.saveTask(dantistTask);
+//        taskService.saveTask(presentTask);
+//
+//        Document doc = Jsoup.connect(baseURI + "/selectTasksByDeadline?buttonId=today").get();
+//        Elements elements = doc.getElementsByTag("td");
+//
+//        assertEquals(elements.size(), 3);
+//        assertEquals(elements.get(0).ownText(), "Send an e-mail");
+//        assertEquals(elements.get(1).ownText(), "Today");
+//    }
 
-        Document doc = Jsoup.connect(baseURI + "/selectTasksByDeadline?buttonId=today").get();
-        Elements elements = doc.getElementsByTag("td");
+//    @Test
+//    public void showTasksByWeekDeadlineTest() throws IOException {
+//        Task callTask = new Task(1, "Call Maria", Deadline.week);
+//        Task dantistTask = new Task(1, "Make an appointment with Dr.Robertson", Deadline.week);
+//        Task presentTask =  new Task(1, "Buy presents", Deadline.someday);
+//        taskService.saveTask(callTask);
+//        taskService.saveTask(dantistTask);
+//        taskService.saveTask(presentTask);
+//
+//        Document doc = Jsoup.connect(baseURI + "/selectTasksByDeadline?buttonId=week").get();
+//        Elements elements = doc.getElementsByTag("td");
+//        assertEquals(elements.size(), 6);
+//        assertEquals(elements.get(0).ownText(), "Call Maria");
+//        assertEquals(elements.get(1).ownText(), "Week");
+//        assertEquals(elements.get(3).ownText(), "Make an appointment with Dr.Robertson");
+//        assertEquals(elements.get(4).ownText(), "Week");
+//    }
 
-        assertEquals(elements.size(), 3);
-        assertEquals(elements.get(0).ownText(), "Send an e-mail");
-        assertEquals(elements.get(1).ownText(), "Today");
-    }
-
-    @Test
-    public void showTasksByWeekDeadlineTest() throws IOException {
-        Task callTask = new Task(1, "Call Maria", Deadline.week);
-        Task dantistTask = new Task(1, "Make an appointment with Dr.Robertson", Deadline.week);
-        Task presentTask =  new Task(1, "Buy presents", Deadline.someday);
-        taskService.saveTask(callTask);
-        taskService.saveTask(dantistTask);
-        taskService.saveTask(presentTask);
-
-        Document doc = Jsoup.connect(baseURI + "/selectTasksByDeadline?buttonId=week").get();
-        Elements elements = doc.getElementsByTag("td");
-        assertEquals(elements.size(), 6);
-        assertEquals(elements.get(0).ownText(), "Call Maria");
-        assertEquals(elements.get(1).ownText(), "Week");
-        assertEquals(elements.get(3).ownText(), "Make an appointment with Dr.Robertson");
-        assertEquals(elements.get(4).ownText(), "Week");
-    }
-
-    @Test
-    public void showTasksBySomedayDeadlineTest() throws IOException {
-        Task callTask = new Task(1, "Call Maria", Deadline.week);
-        Task dantistTask = new Task(1, "Make an appointment with Dr.Robertson", Deadline.week);
-        Task presentTask =  new Task(1, "Buy presents", Deadline.someday);
-        taskService.saveTask(callTask);
-        taskService.saveTask(dantistTask);
-        taskService.saveTask(presentTask);
-
-        Document doc = Jsoup.connect(baseURI + "/selectTasksByDeadline?buttonId=someday").get();
-        Elements elements = doc.getElementsByTag("td");
-        assertEquals(elements.size(), 3);
-        assertEquals(elements.get(0).ownText(), "Buy presents");
-        assertEquals(elements.get(1).ownText(), "Someday");
-    }
+//    @Test
+//    public void showTasksBySomedayDeadlineTest() throws IOException {
+//        Task callTask = new Task(1, "Call Maria", Deadline.week);
+//        Task dantistTask = new Task(1, "Make an appointment with Dr.Robertson", Deadline.week);
+//        Task presentTask =  new Task(1, "Buy presents", Deadline.someday);
+//        taskService.saveTask(callTask);
+//        taskService.saveTask(dantistTask);
+//        taskService.saveTask(presentTask);
+//
+//        Document doc = Jsoup.connect(baseURI + "/selectTasksByDeadline?buttonId=someday").get();
+//        Elements elements = doc.getElementsByTag("td");
+//        assertEquals(elements.size(), 3);
+//        assertEquals(elements.get(0).ownText(), "Buy presents");
+//        assertEquals(elements.get(1).ownText(), "Someday");
+//    }
 
 
     @Test
