@@ -4,17 +4,21 @@ import com.example.todolist.dtos.TaskDTO;
 import com.example.todolist.entities.Deadline;
 import com.example.todolist.entities.Task;
 
+import com.example.todolist.exceptions.InternalErrorException;
 import com.example.todolist.exceptions.task.TaskNotFoundException;
 import com.example.todolist.repositories.TaskRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
+import java.util.*;
+
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.lang.reflect.Field;
+
 @Service
+@Slf4j
 public class TaskServiceImpl implements TaskService {
     @Autowired
     private TaskRepository taskRepository;
@@ -49,13 +53,40 @@ public class TaskServiceImpl implements TaskService {
         return "Task with id=" + id + " is deleted.";
     }
 
-    //    @Override
-//    public Task editTask(Task task) {
-//        Task taskToEdit = getTask(task.getId());
-//        taskToEdit.setDescription(task.getDescription());
-//        taskToEdit.setDeadline(task.getDeadline());
-//        return saveTask(task);
-//    }
+    @Override
+    public Task editTask(TaskDTO taskUpdatesDto, int id) {
+        Task taskToEdit = getTask(id);
+        Task editedTask = transferDtoValuesToEntity(taskToEdit, taskUpdatesDto);
+        return taskRepository.save(editedTask);
+    }
+
+    private Task transferDtoValuesToEntity(Task taskEntity, TaskDTO taskDTO) {
+        Field[] entityFields = taskEntity.getClass().getDeclaredFields();
+
+        for (Field entityField : entityFields) {
+            Field dtoFieldIfExists = null;
+            try {
+                dtoFieldIfExists = taskDTO.getClass().getDeclaredField(entityField.getName());
+                 if (dtoFieldIfExists.getType().equals(entityField.getType())) {
+                     entityField.setAccessible(true);
+                     dtoFieldIfExists.setAccessible(true);
+                     entityField.set(taskEntity, dtoFieldIfExists.get(taskDTO));
+                 }
+            } catch (NoSuchFieldException ignored) {
+            } catch (IllegalAccessException e) {
+                log.error("Failed to get DTP " + entityField.getName() + " field value: "  + e );
+                throw new InternalErrorException();
+            } finally {
+                if (entityField != null) {
+                    entityField.setAccessible(false);
+                }
+                if (dtoFieldIfExists != null) {
+                    dtoFieldIfExists.setAccessible(false);
+                }
+            }
+        }
+        return taskEntity;
+    }
 
     @Override
     public void deleteAllTasks() {

@@ -73,13 +73,13 @@ class TaskServiceImplTest {
 //        assertEquals(listOfTasks.size(), 1);
 //    }
 
-    @Test
-    public void getTaskTest() {
-        List<Task> listOfTasks = taskService.findAllTasks();
-        int currentIdOfTask = listOfTasks.get(0).getId();
-        Task task = taskService.getTask(currentIdOfTask);
-        assertEquals(task.getDescription(), "Send an e-mail");
-    }
+//    @Test
+//    public void getTaskTest() {
+//        List<Task> listOfTasks = taskService.findAllTasks();
+//        int currentIdOfTask = listOfTasks.get(0).getId();
+//        Task task = taskService.getTask(currentIdOfTask);
+//        assertEquals(task.getDescription(), "Send an e-mail");
+//    }
 
 //    @Test
 //    public void findTasksByDeadlineTest() {

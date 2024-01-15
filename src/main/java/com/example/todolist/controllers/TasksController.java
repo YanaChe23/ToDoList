@@ -1,3 +1,4 @@
+// todo реализая патч запроса с рефлексией
 package com.example.todolist.controllers;
 
 import com.example.todolist.dtos.TaskDTO;
@@ -7,6 +8,7 @@ import com.example.todolist.services.user.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @RestController
@@ -17,32 +19,31 @@ public class TasksController {
     @Autowired
     TaskServiceImpl taskServiceImpl;
 
-    @PostMapping("/addTask")
+    @PostMapping("/tasks")
     public Task saveTask(@RequestBody TaskDTO task) {
         return taskServiceImpl.saveTask(task);
     }
 
-    @GetMapping("/allTasks")
+    @GetMapping("/tasks")
     public List<Task> getAllTasks() {
         return taskServiceImpl.getAllTask();
     }
 
-    @GetMapping("/findTask")
-    public Task getTask(@RequestParam int id) {
+    @GetMapping("/tasks/{id}")
+    public Task getTask(@PathVariable  int id) {
         return taskServiceImpl.getTask(id);
     }
 
-    @DeleteMapping("/deleteTask")
-    public String deleteTask(@RequestParam int id) {
+    @DeleteMapping("/tasks/{id}")
+    public String deleteTask(@PathVariable  int id) {
         return taskServiceImpl.deleteTask(id);
     }
 
-//      TODO
-//    @PatchMapping("/editTask")
-//    public Task saveEditedTask(@RequestBody Task task) {
-//        return taskServiceImpl.editTask(task);
-//    }
-//
+    @PatchMapping("/tasks/{id}")
+    public Task saveEditedTask(@RequestBody TaskDTO task, @PathVariable int id) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        return taskServiceImpl.editTask(task, id);
+    }
+//gi
 
 
 //    @GetMapping("/showTasksByDeadline")
