@@ -1,8 +1,10 @@
 package com.example.todolist.services.task;
 
+import com.example.todolist.dtos.TaskDTO;
 import com.example.todolist.entities.Deadline;
 import com.example.todolist.entities.Task;
 import com.example.todolist.entities.User;
+import com.example.todolist.exceptions.task.TaskNotFoundException;
 import com.example.todolist.services.user.UserServiceImpl;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterAll;
@@ -51,46 +53,87 @@ class TaskServiceImplTest {
         registry.add("spring.datasource.password", postgres::getPassword);
     }
 
-//    @BeforeEach
-//    void setUp() {
-//        baseURI = "http://localhost:" + port;
-//        RestAssured.baseURI = baseURI;
-//        taskService.deleteAllTasks();
-//        userService.deleteAllUsers();
-//        User user = new User(1, "Vlad");
-//        userService.saveUser(user);
-//        Task task = new Task(1, "Send an e-mail", Deadline.today);
-//        taskService.saveTask(task);
-//    }
+    @BeforeEach
+    void setUp() {
+        baseURI = "http://localhost:" + port;
+        RestAssured.baseURI = baseURI;
+        taskService.deleteAllTasks();
+        userService.deleteAllUsers();
+        User user = new User(1, "Dior");
+        userService.saveUser(user);
+        TaskDTO taskDTO = new TaskDTO("Send an e-mail", Deadline.today);
+        taskService.saveTask(taskDTO);
+    }
 
-//    @Test
-//    public void deleteAndSaveTaskTest() {
-//        taskService.deleteAllTasks();
-//        Task task = new Task(1, "Send an e-mail", Deadline.today);
-//        taskService.saveTask(task);
-//
-//        List<Task> listOfTasks = taskService.findAllTasks();
-//        assertEquals(listOfTasks.size(), 1);
-//    }
+    @Test
+    public void deleteAndSaveTaskTest() {
+        taskService.deleteAllTasks();
 
-//    @Test
-//    public void getTaskTest() {
-//        List<Task> listOfTasks = taskService.findAllTasks();
-//        int currentIdOfTask = listOfTasks.get(0).getId();
-//        Task task = taskService.getTask(currentIdOfTask);
-//        assertEquals(task.getDescription(), "Send an e-mail");
-//    }
+        TaskDTO taskDTO = new TaskDTO("Send an e-mail", Deadline.today);
+        taskService.saveTask(taskDTO);
+
+        List<Task> listOfTasks = taskService.findAllTasks();
+        assertEquals(listOfTasks.size(), 1);
+    }
+
+    @Test
+    public void getAllTasksTest() {
+        TaskDTO calling = new TaskDTO("Call Maria", Deadline.week);
+        TaskDTO mediation = new TaskDTO("Meditate", Deadline.today);
+        taskService.saveTask(calling);
+        taskService.saveTask(mediation);
+
+        List<Task> tasks = taskService.getAllTask();
+        assertEquals(tasks.size(), 3);
+    }
+
+    @Test
+    public void getTaskSuccessTest() {
+        List<Task> listOfTasks = taskService.findAllTasks();
+        int currentIdOfTask = listOfTasks.get(0).getId();
+        Task task = taskService.getTask(currentIdOfTask);
+        assertEquals(task.getDescription(), "Send an e-mail");
+    }
+
+    @Test
+    public void getTaskFailTest() {
+        int outOfBoundIndex = taskService.findAllTasks().size() + 1;
+
+        assertThrows(TaskNotFoundException.class, ()
+                -> taskService.getTask(outOfBoundIndex));
+    }
+
+    @Test
+    public void editTaskTest() {
+
+        int taskToUpdateIndex = taskService.getAllTask().get(0).getId();
+        assertEquals(taskService.getTask(taskToUpdateIndex).getDescription(), "Send an e-mail");
+
+        TaskDTO taskDTO = new TaskDTO("Send an e-mail to Alex", Deadline.today);
+        taskService.editTask(taskDTO, taskToUpdateIndex);
+        assertEquals(taskService.getTask(taskToUpdateIndex).getDescription(), "Send an e-mail to Alex");
+
+    }
 
 //    @Test
 //    public void findTasksByDeadlineTest() {
-//        Task callTask = new Task(1, "Call Bob", Deadline.week);
-//        Task dantistTask = new Task(1, "Make an appointment with Dr.Robertson", Deadline.week);
-//        Task presentTask =  new Task(1, "Buy presents", Deadline.someday);
+//        TaskDTO callTask = new TaskDTO("Call Bob", Deadline.week);
+//        TaskDTO dentistTask = new TaskDTO( "Make an appointment with Dr.Robertson", Deadline.week);
+//        TaskDTO presentTask =  new TaskDTO("Buy presents", Deadline.someday);
 //        taskService.saveTask(callTask);
-//        taskService.saveTask(dantistTask);
+//        taskService.saveTask(dentistTask);
 //        taskService.saveTask(presentTask);
 //        assertEquals(taskService.findTasksByDeadline(Deadline.today).size(), 1);
 //        assertEquals(taskService.findTasksByDeadline(Deadline.week).size(), 2);
 //        assertEquals(taskService.findTasksByDeadline(Deadline.someday).size(), 1);
 //    }
+
+    @Test
+    void testTaskNotFoundExceptionMessage() {
+        TaskNotFoundException exception = assertThrows(
+                TaskNotFoundException.class,
+                () -> { throw new TaskNotFoundException(1); }
+        );
+        assertEquals("Could not find a task with id 1.",  exception.getMessage());
+    }
 }

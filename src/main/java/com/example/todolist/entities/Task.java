@@ -7,8 +7,8 @@ import lombok.ToString;
 
 @Entity
 @Table(name="tasks")
-//@Getter
-//@Setter
+@Getter
+@Setter
 @ToString
 public class Task {
     @Id
@@ -28,38 +28,6 @@ public class Task {
     public Task(int userId, String description, Deadline deadline) {
         this.userId = userId;
         this.description = description;
-        this.deadline = deadline;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Deadline getDeadline() {
-        return deadline;
-    }
-
-    public void setDeadline(Deadline deadline) {
         this.deadline = deadline;
     }
 }

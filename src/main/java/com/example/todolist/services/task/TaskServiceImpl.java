@@ -74,7 +74,7 @@ public class TaskServiceImpl implements TaskService {
                  }
             } catch (NoSuchFieldException ignored) {
             } catch (IllegalAccessException e) {
-                log.error("Failed to get DTP " + entityField.getName() + " field value: "  + e );
+                log.error("Failed to get DTO " + entityField.getName() + " field value: "  + e );
                 throw new InternalErrorException();
             } finally {
                 if (entityField != null) {
@@ -102,6 +102,5 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> findTasksByDeadline(Deadline deadline) {
         return taskRepository.findByDeadline(deadline);
     }
-
 
 }

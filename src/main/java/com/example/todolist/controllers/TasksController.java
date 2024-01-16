@@ -1,4 +1,3 @@
-// todo реализая патч запроса с рефлексией
 package com.example.todolist.controllers;
 
 import com.example.todolist.dtos.TaskDTO;
@@ -40,7 +39,7 @@ public class TasksController {
     }
 
     @PatchMapping("/tasks/{id}")
-    public Task saveEditedTask(@RequestBody TaskDTO task, @PathVariable int id) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    public Task saveEditedTask(@RequestBody TaskDTO task, @PathVariable int id) {
         return taskServiceImpl.editTask(task, id);
     }
 //gi
