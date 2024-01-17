@@ -16,7 +16,6 @@ public interface TaskService {
     Task editTask(TaskDTO task, int id);
     String deleteTask(int id);
     void deleteAllTasks();
-    List<Task> findAllTasks();
-    List<Task> findTasksByDeadline(Deadline deadline);
+//    List<Task> findTasksByDeadline(Deadline deadline);
 
 }

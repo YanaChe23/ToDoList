@@ -47,13 +47,6 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String deleteTask(int id) {
-        if (!taskRepository.existsById(id)) throw new TaskNotFoundException(id);
-        taskRepository.deleteById(id);
-        return "Task with id=" + id + " is deleted.";
-    }
-
-    @Override
     public Task editTask(TaskDTO taskUpdatesDto, int id) {
         Task taskToEdit = getTask(id);
         Task editedTask = transferDtoValuesToEntity(taskToEdit, taskUpdatesDto);
@@ -73,6 +66,9 @@ public class TaskServiceImpl implements TaskService {
                      entityField.set(taskEntity, dtoFieldIfExists.get(taskDTO));
                  }
             } catch (NoSuchFieldException ignored) {
+                // it's ok - it means that there are fields that don't match, the app should just skip it
+                // for example, it can be task id field in entity - we don't pass this info in DTO
+                // thrown by .getDeclaredField()
             } catch (IllegalAccessException e) {
                 log.error("Failed to get DTO " + entityField.getName() + " field value: "  + e );
                 throw new InternalErrorException();
@@ -89,18 +85,20 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public String deleteTask(int id) {
+        if (!taskRepository.existsById(id)) throw new TaskNotFoundException(id);
+        taskRepository.deleteById(id);
+        return "Task with id=" + id + " is deleted.";
+    }
+
+    @Override
     public void deleteAllTasks() {
         taskRepository.deleteAll();
     }
-
-    @Override
-    public List<Task> findAllTasks() {
-        return taskRepository.findAll();
-    }
-
-    @Override
-    public List<Task> findTasksByDeadline(Deadline deadline) {
-        return taskRepository.findByDeadline(deadline);
-    }
+//
+//    @Override
+//    public List<Task> findTasksByDeadline(Deadline deadline) {
+//        return taskRepository.findByDeadline(deadline);
+//    }
 
 }

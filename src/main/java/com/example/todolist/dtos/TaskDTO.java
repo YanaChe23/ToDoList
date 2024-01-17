@@ -15,4 +15,3 @@ public class TaskDTO {
     public String description;
     public Deadline deadline;
 }
-

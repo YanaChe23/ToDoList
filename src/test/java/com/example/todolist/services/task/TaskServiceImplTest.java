@@ -66,14 +66,12 @@ class TaskServiceImplTest {
     }
 
     @Test
-    public void deleteAndSaveTaskTest() {
-        taskService.deleteAllTasks();
-
+    public void saveTaskTest() {
         TaskDTO taskDTO = new TaskDTO("Send an e-mail", Deadline.today);
         taskService.saveTask(taskDTO);
 
-        List<Task> listOfTasks = taskService.findAllTasks();
-        assertEquals(listOfTasks.size(), 1);
+        List<Task> listOfTasks = taskService.getAllTask();
+        assertEquals(listOfTasks.size(), 2);
     }
 
     @Test
@@ -89,7 +87,7 @@ class TaskServiceImplTest {
 
     @Test
     public void getTaskSuccessTest() {
-        List<Task> listOfTasks = taskService.findAllTasks();
+        List<Task> listOfTasks = taskService.getAllTask();
         int currentIdOfTask = listOfTasks.get(0).getId();
         Task task = taskService.getTask(currentIdOfTask);
         assertEquals(task.getDescription(), "Send an e-mail");
@@ -97,7 +95,7 @@ class TaskServiceImplTest {
 
     @Test
     public void getTaskFailTest() {
-        int outOfBoundIndex = taskService.findAllTasks().size() + 1;
+        int outOfBoundIndex = taskService.getAllTask().size() + 1;
 
         assertThrows(TaskNotFoundException.class, ()
                 -> taskService.getTask(outOfBoundIndex));
@@ -105,15 +103,48 @@ class TaskServiceImplTest {
 
     @Test
     public void editTaskTest() {
-
         int taskToUpdateIndex = taskService.getAllTask().get(0).getId();
         assertEquals(taskService.getTask(taskToUpdateIndex).getDescription(), "Send an e-mail");
 
         TaskDTO taskDTO = new TaskDTO("Send an e-mail to Alex", Deadline.today);
         taskService.editTask(taskDTO, taskToUpdateIndex);
         assertEquals(taskService.getTask(taskToUpdateIndex).getDescription(), "Send an e-mail to Alex");
-
     }
+
+    @Test
+    public void deleteTaskSuccessTest() {
+        List<Task> allTasks = taskService.getAllTask();
+        int amountOfTasksBeforeDelete = allTasks.size();
+        int taskToDeleteIndex = allTasks.get(0).getId();
+
+        String result = taskService.deleteTask(taskToDeleteIndex);
+        int amountOfTasksAfterDelete = taskService.getAllTask().size();
+
+        assertEquals(amountOfTasksBeforeDelete - 1, amountOfTasksAfterDelete);
+        assertEquals("Task with id=" + taskToDeleteIndex + " is deleted.", result);
+    }
+
+    @Test
+    public void deleteTaskNoTaskFoundTest() {
+        List<Task> allTasks = taskService.getAllTask();
+        int amountOfTasksBeforeDelete = allTasks.size();
+        int taskToDeleteIndex = amountOfTasksBeforeDelete + 1;
+
+        assertThrows(TaskNotFoundException.class, ()->{
+            taskService.deleteTask(taskToDeleteIndex);
+        });
+
+        int amountOfTasksAfterDelete = taskService.getAllTask().size();
+        assertEquals(amountOfTasksBeforeDelete, amountOfTasksAfterDelete);
+    }
+
+    @Test
+    public void deleteAllTasksTest() {
+        taskService.deleteAllTasks();
+        List<Task> remainingTasks = taskService.getAllTask();
+        assertEquals(0, remainingTasks.size());
+    }
+
 
 //    @Test
 //    public void findTasksByDeadlineTest() {
