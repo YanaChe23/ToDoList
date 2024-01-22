@@ -1,14 +1,12 @@
 package com.example.todolist.dtos;
 
 import com.example.todolist.entities.Deadline;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 
 @ToString
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 public class TaskDTO {

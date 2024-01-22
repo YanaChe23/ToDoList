@@ -7,6 +7,7 @@ import com.example.todolist.entities.User;
 import com.example.todolist.exceptions.task.TaskNotFoundException;
 import com.example.todolist.services.user.UserServiceImpl;
 import io.restassured.RestAssured;
+import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +31,7 @@ class TaskServiceImplTest {
     UserServiceImpl userService;
     @LocalServerPort
     private Integer port;
-    String baseURI;
+    private User user;
 
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
             "postgres:15-alpine"
@@ -53,13 +54,17 @@ class TaskServiceImplTest {
         registry.add("spring.datasource.password", postgres::getPassword);
     }
 
+    @PostConstruct
+    public void oneTimeSetUp() {
+        user = new User(1, "Dior");
+
+    }
+
     @BeforeEach
     void setUp() {
-        baseURI = "http://localhost:" + port;
-        RestAssured.baseURI = baseURI;
+        RestAssured.baseURI = "http://localhost:" + port;
         taskService.deleteAllTasks();
         userService.deleteAllUsers();
-        User user = new User(1, "Dior");
         userService.saveUser(user);
         TaskDTO taskDTO = new TaskDTO("Send an e-mail", Deadline.today);
         taskService.saveTask(taskDTO);
@@ -99,6 +104,11 @@ class TaskServiceImplTest {
 
         assertThrows(TaskNotFoundException.class, ()
                 -> taskService.getTask(outOfBoundIndex));
+    }
+
+    @Test
+    public void getTaskByDeadline() {
+
     }
 
     @Test
@@ -144,20 +154,6 @@ class TaskServiceImplTest {
         List<Task> remainingTasks = taskService.getAllTask();
         assertEquals(0, remainingTasks.size());
     }
-
-
-//    @Test
-//    public void findTasksByDeadlineTest() {
-//        TaskDTO callTask = new TaskDTO("Call Bob", Deadline.week);
-//        TaskDTO dentistTask = new TaskDTO( "Make an appointment with Dr.Robertson", Deadline.week);
-//        TaskDTO presentTask =  new TaskDTO("Buy presents", Deadline.someday);
-//        taskService.saveTask(callTask);
-//        taskService.saveTask(dentistTask);
-//        taskService.saveTask(presentTask);
-//        assertEquals(taskService.findTasksByDeadline(Deadline.today).size(), 1);
-//        assertEquals(taskService.findTasksByDeadline(Deadline.week).size(), 2);
-//        assertEquals(taskService.findTasksByDeadline(Deadline.someday).size(), 1);
-//    }
 
     @Test
     void testTaskNotFoundExceptionMessage() {

@@ -9,13 +9,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public interface TaskService {
-    List<Task> getAllTask();
     Task saveTask(TaskDTO task);
+    List<Task> getAllTask();
     Task getTask(int id);
-
+    List<Task> getTasksByDeadline(Deadline deadline);
     Task editTask(TaskDTO task, int id);
     String deleteTask(int id);
     void deleteAllTasks();
-//    List<Task> findTasksByDeadline(Deadline deadline);
-
 }

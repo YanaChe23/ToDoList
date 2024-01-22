@@ -47,6 +47,11 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public List<Task> getTasksByDeadline(Deadline deadline) {
+        return taskRepository.findByDeadline(deadline);
+    }
+
+    @Override
     public Task editTask(TaskDTO taskUpdatesDto, int id) {
         Task taskToEdit = getTask(id);
         Task editedTask = transferDtoValuesToEntity(taskToEdit, taskUpdatesDto);
@@ -95,10 +100,4 @@ public class TaskServiceImpl implements TaskService {
     public void deleteAllTasks() {
         taskRepository.deleteAll();
     }
-//
-//    @Override
-//    public List<Task> findTasksByDeadline(Deadline deadline) {
-//        return taskRepository.findByDeadline(deadline);
-//    }
-
 }
