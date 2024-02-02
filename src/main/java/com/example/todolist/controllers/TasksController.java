@@ -1,4 +1,3 @@
-// todo дописать taskController tests (eedit task проходит криво)
 // добавить тестты на вывод тасок по дедлайну в service & controller
 package com.example.todolist.controllers;
 
