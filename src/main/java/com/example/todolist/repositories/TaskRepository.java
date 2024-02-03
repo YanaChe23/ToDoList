@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TaskRepository extends JpaRepository<Task, Integer> {
+public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByDeadline(Deadline deadline);
 }

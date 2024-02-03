@@ -1,52 +1,63 @@
 // добавить тестты на вывод тасок по дедлайну в service & controller
+// todo контроллер принимает любой дедлайн
 package com.example.todolist.controllers;
 
-import com.example.todolist.dtos.TaskDTO;
-import com.example.todolist.entities.Deadline;
-import com.example.todolist.entities.Task;
+
+import com.example.todolist.api.v1.dto.PaginationDto;
+import com.example.todolist.api.v1.dto.TaskRequestDto;
+import com.example.todolist.api.v1.dto.TaskResponseDto;
+import com.example.todolist.api.v1.rest.TasksApi;
 import com.example.todolist.services.task.TaskServiceImpl;
-import com.example.todolist.services.user.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-public class TasksController {
-    @Autowired
-    UserServiceImpl userServiceImpl;
+public class TasksController implements TasksApi {
     @Autowired
     TaskServiceImpl taskServiceImpl;
 
-    @PostMapping("/tasks")
-    public Task saveTask(@RequestBody TaskDTO task) {
-        return taskServiceImpl.saveTask(task);
+    @Override
+    public ResponseEntity<TaskResponseDto> tasksPost(TaskRequestDto taskRequestDto) {
+        return ResponseEntity.ok(
+                taskServiceImpl.save(taskRequestDto)
+        );
     }
 
-    @GetMapping("/tasks")
-    public List<Task> getAllTasks() {
-        return taskServiceImpl.getAllTask();
+    @Override
+    public ResponseEntity<List<TaskResponseDto>> tasksGet(PaginationDto pagination) {
+        return ResponseEntity.ok(
+                taskServiceImpl.get(pagination)
+        );
     }
 
-    @GetMapping("/tasks/{id}")
-    public Task getTask(@PathVariable  int id) {
-        return taskServiceImpl.getTask(id);
+    @Override
+    public ResponseEntity<TaskResponseDto> tasksIdGet(Long id) {
+        return ResponseEntity.ok(
+                taskServiceImpl.findById(id)
+        );
     }
 
-    @GetMapping("/tasks/deadline/{deadline}")
-    public List<Task> showTasksByDeadline(@PathVariable Deadline deadline) {
-        return taskServiceImpl.getTasksByDeadline(deadline);
+//    @Override
+//    public ResponseEntity<List<TaskResponseDto>> tasksDeadlineDeadlineGet(String deadline) {
+//        return ResponseEntity.ok(
+//                taskServiceImpl.
+//        );
+//    }
+
+    @Override
+    public ResponseEntity<TaskResponseDto> tasksIdPatch(Long id, TaskRequestDto taskRequestDto) {
+        return ResponseEntity.ok(
+                taskServiceImpl.edit(id, taskRequestDto)
+        );
     }
 
-    @PatchMapping("/tasks/{id}")
-    public Task editTask(@RequestBody TaskDTO task, @PathVariable int id) {
-        return taskServiceImpl.editTask(task, id);
-    }
-
-    @DeleteMapping("/tasks/{id}")
-    public String deleteTask(@PathVariable  int id) {
-        return taskServiceImpl.deleteTask(id);
+    @Override
+    public ResponseEntity<String> tasksIdDelete(Long id) {
+        return ResponseEntity.ok(
+                taskServiceImpl.deleteById(id)
+        );
     }
 }
-
-

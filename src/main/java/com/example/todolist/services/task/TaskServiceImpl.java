@@ -1,21 +1,22 @@
 package com.example.todolist.services.task;
 
-import com.example.todolist.dtos.TaskDTO;
-import com.example.todolist.entities.Deadline;
+import com.example.todolist.api.v1.dto.PaginationDto;
+import com.example.todolist.api.v1.dto.TaskRequestDto;
+import com.example.todolist.api.v1.dto.TaskResponseDto;
 import com.example.todolist.entities.Task;
 
-import com.example.todolist.exceptions.InternalErrorException;
-import com.example.todolist.exceptions.task.TaskNotFoundException;
+import com.example.todolist.exceptions.FailedToSaveException;
+import com.example.todolist.exceptions.ItemNotFoundException;
 import com.example.todolist.repositories.TaskRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.*;
 
 import org.springframework.stereotype.Service;
-
-import java.lang.reflect.Field;
 
 @Service
 @Slf4j
@@ -27,77 +28,75 @@ public class TaskServiceImpl implements TaskService {
     private ModelMapper modelMapper;
 
     @Override
-    public Task saveTask(TaskDTO taskDTO) {
-        Task task = modelMapper.map(taskDTO, Task.class);
+    public TaskResponseDto save(TaskRequestDto taskRequestDto) {
+        Task task = modelMapper.map(taskRequestDto, Task.class);
         // TODO remove once auth is added
         task.setUserId(1);
-        return taskRepository.save(task);
+        return modelMapper.map(
+                saveToDatabase(task), TaskResponseDto.class
+        );
     }
 
-    @Override
-    public List<Task> getAllTask() {
-        return taskRepository.findAll();
-    }
-
-    @Override
-    public Task getTask(int id) {
-        Optional<Task> optionalTask = taskRepository.findById(id);
-        optionalTask.orElseThrow(() -> new TaskNotFoundException(id));
-        return optionalTask.get();
-    }
-
-    @Override
-    public List<Task> getTasksByDeadline(Deadline deadline) {
-        return taskRepository.findByDeadline(deadline);
-    }
-
-    @Override
-    public Task editTask(TaskDTO taskUpdatesDto, int id) {
-        Task taskToEdit = getTask(id);
-        Task editedTask = transferDtoValuesToEntity(taskToEdit, taskUpdatesDto);
-        return taskRepository.save(editedTask);
-    }
-
-    private Task transferDtoValuesToEntity(Task taskEntity, TaskDTO taskDTO) {
-        Field[] entityFields = taskEntity.getClass().getDeclaredFields();
-
-        for (Field entityField : entityFields) {
-            Field dtoFieldIfExists = null;
-            try {
-                dtoFieldIfExists = taskDTO.getClass().getDeclaredField(entityField.getName());
-                 if (dtoFieldIfExists.getType().equals(entityField.getType())) {
-                     entityField.setAccessible(true);
-                     dtoFieldIfExists.setAccessible(true);
-                     entityField.set(taskEntity, dtoFieldIfExists.get(taskDTO));
-                 }
-            } catch (NoSuchFieldException ignored) {
-                // it's ok - it means that there are fields that don't match, the app should just skip it
-                // for example, it can be task id field in entity - we don't pass this info in DTO
-                // thrown by .getDeclaredField()
-            } catch (IllegalAccessException e) {
-                log.error("Failed to get DTO " + entityField.getName() + " field value: "  + e );
-                throw new InternalErrorException();
-            } finally {
-                if (entityField != null) {
-                    entityField.setAccessible(false);
-                }
-                if (dtoFieldIfExists != null) {
-                    dtoFieldIfExists.setAccessible(false);
-                }
-            }
+    private Task saveToDatabase(Task task) {
+        try {
+            return taskRepository.save(task);
+        } catch (RuntimeException e) {
+            log.error("Failed to save task: " + task + ". Error: " + e.getMessage());
+            throw new FailedToSaveException("Internal error. Failed to save task.");
         }
-        return taskEntity;
     }
 
     @Override
-    public String deleteTask(int id) {
-        if (!taskRepository.existsById(id)) throw new TaskNotFoundException(id);
+    public List<TaskResponseDto> get(PaginationDto paginationDto) {
+        if (paginationDto.getLimit() == null || paginationDto.getOffset() == null)
+            throw new ItemNotFoundException("Pagination is a required parameter. Please provide pagination.");
+        Pageable pageable = PageRequest.of(paginationDto.getOffset(), paginationDto.getLimit());
+        return taskRepository.findAll(pageable)
+                .stream()
+                .map(
+                        t -> modelMapper.map(t, TaskResponseDto.class)
+                ).toList();
+    }
+
+    @Override
+    public TaskResponseDto findById(Long id) {
+        Optional<Task> optionalTask = taskRepository.findById(id);
+        optionalTask.orElseThrow(() -> new ItemNotFoundException("Can't find a task with anb id " + id));
+        return modelMapper.map(
+                optionalTask.get(), TaskResponseDto.class
+        );
+    }
+//
+//    @Override
+//    public List<TaskResponseDto> findByDeadline(String deadline) {
+//
+//        return taskRepository.findByDeadline(deadline)
+//                .stream().
+//                map(
+//                    t -> modelMapper.map(t, TaskResponseDto.class)
+//                ).toList();
+//    }
+//
+    @Override
+    public TaskResponseDto edit(Long id, TaskRequestDto taskRequestDto) {
+        Task taskToSave = modelMapper.map(
+                findById(id), Task.class
+        );
+        Task editedTask = modelMapper.map(taskRequestDto, Task.class);
+        editedTask.setId(taskToSave.getId());
+        return modelMapper.map(
+                saveToDatabase(editedTask), TaskResponseDto.class
+        );
+    }
+
+    @Override
+    public String deleteById(Long id) {
+        findById(id);
         taskRepository.deleteById(id);
-        return "Task with id=" + id + " is deleted.";
+        return "Task is deleted.";
     }
 
-    @Override
-    public void deleteAllTasks() {
+    void deleteAll() {
         taskRepository.deleteAll();
     }
 }

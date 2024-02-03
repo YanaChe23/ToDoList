@@ -116,6 +116,7 @@ paths:
           in: path
           schema:
             type: integer
+            format: int64
           required: true
       responses:
         '200':
@@ -123,9 +124,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  '$ref': '#/components/schemas/TaskResponse'
+                '$ref': '#/components/schemas/TaskResponse'
         '404':
           description: 'Not found'
           content:
