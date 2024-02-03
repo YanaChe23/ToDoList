@@ -17,6 +17,12 @@ components:
           type: integer
           example: 100
 
+    Deadline:
+      enum:
+        - today
+        - week
+        - someday
+
     ErrorResponse:
       type: object
       properties:
@@ -37,10 +43,8 @@ components:
           example: 'Call Maria'
         deadline:
           type: string
-          example: 'today'
-      required:
-        - description
-        - deadline
+          items:
+            '$ref': '#/components/schemas/Deadline'
 
     TaskResponse:
       type: object
@@ -218,7 +222,7 @@ paths:
         - name: deadline
           in: path
           schema:
-            type: string
+            '$ref': '#/components/schemas/Deadline'
           required: true
       responses:
         '200':

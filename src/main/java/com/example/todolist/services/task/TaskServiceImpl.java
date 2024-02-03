@@ -1,8 +1,10 @@
 package com.example.todolist.services.task;
 
+import com.example.todolist.api.v1.dto.DeadlineDto;
 import com.example.todolist.api.v1.dto.PaginationDto;
 import com.example.todolist.api.v1.dto.TaskRequestDto;
 import com.example.todolist.api.v1.dto.TaskResponseDto;
+import com.example.todolist.entities.Deadline;
 import com.example.todolist.entities.Task;
 
 import com.example.todolist.exceptions.FailedToSaveException;
@@ -66,17 +68,16 @@ public class TaskServiceImpl implements TaskService {
                 optionalTask.get(), TaskResponseDto.class
         );
     }
-//
-//    @Override
-//    public List<TaskResponseDto> findByDeadline(String deadline) {
-//
-//        return taskRepository.findByDeadline(deadline)
-//                .stream().
-//                map(
-//                    t -> modelMapper.map(t, TaskResponseDto.class)
-//                ).toList();
-//    }
-//
+
+    @Override
+    public List<TaskResponseDto> findByDeadline(DeadlineDto deadlineDto) {
+        return taskRepository.findByDeadline(Deadline.valueOf(deadlineDto.getValue()))
+                .stream().
+                map(
+                    t -> modelMapper.map(t, TaskResponseDto.class)
+                ).toList();
+    }
+
     @Override
     public TaskResponseDto edit(Long id, TaskRequestDto taskRequestDto) {
         Task taskToSave = modelMapper.map(
