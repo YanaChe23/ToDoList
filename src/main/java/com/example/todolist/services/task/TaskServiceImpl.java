@@ -17,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -45,7 +44,7 @@ public class TaskServiceImpl implements TaskService {
             return taskRepository.save(task);
         } catch (RuntimeException e) {
             log.error("Failed to save task: " + task + ". Error: " + e.getMessage());
-            throw new FailedToSaveException("Internal error. Failed to save task.");
+            throw new FailedToSaveException("Internal error. Failed to save a task.");
         }
     }
 
@@ -64,7 +63,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskResponseDto findById(Long id) {
         Optional<Task> optionalTask = taskRepository.findById(id);
-        optionalTask.orElseThrow(() -> new ItemNotFoundException("Can't find a task with anb id " + id));
+        optionalTask.orElseThrow(() -> new ItemNotFoundException("Can't find a task with an id " + id));
         return modelMapper.map(
                 optionalTask.get(), TaskResponseDto.class
         );

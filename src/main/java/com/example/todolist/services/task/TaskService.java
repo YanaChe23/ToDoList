@@ -4,8 +4,6 @@ import com.example.todolist.api.v1.dto.DeadlineDto;
 import com.example.todolist.api.v1.dto.PaginationDto;
 import com.example.todolist.api.v1.dto.TaskRequestDto;
 import com.example.todolist.api.v1.dto.TaskResponseDto;
-import com.example.todolist.entities.Deadline;
-import com.example.todolist.entities.Task;
 
 import java.util.List;
 

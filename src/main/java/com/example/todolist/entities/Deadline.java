@@ -1,6 +1,5 @@
 package com.example.todolist.entities;
 
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,7 +13,4 @@ public enum Deadline {
                         .map(Enum::name)
                         .toList();
         }
-
 }
-
-

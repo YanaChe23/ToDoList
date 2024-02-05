@@ -1,15 +1,13 @@
 package com.example.todolist.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @Table(name="tasks")
-@Getter
-@Setter
-@ToString
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Task {
     @Id
     @Column(name="id")
@@ -23,12 +21,5 @@ public class Task {
     @Column(name="deadline")
     @Enumerated(EnumType.STRING)
     private Deadline deadline;
-    public Task() {
-    }
-    public Task(int userId, String description, Deadline deadline) {
-        this.userId = userId;
-        this.description = description;
-        this.deadline = deadline;
-    }
 }
 

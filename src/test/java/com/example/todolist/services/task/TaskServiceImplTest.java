@@ -160,7 +160,7 @@ class TaskServiceImplTest {
         int amountOfTasksBeforeDelete = allTasks.size();
         assertTrue(amountOfTasksBeforeDelete > 0);
 
-        assertEquals("Task is deleted.",
+        assertEquals("Task is deleted",
                 taskService.deleteById(allTasks.get(0).getId()));
         assertEquals(amountOfTasksBeforeDelete - 1, taskService.get(paginationDto).size());
     }
