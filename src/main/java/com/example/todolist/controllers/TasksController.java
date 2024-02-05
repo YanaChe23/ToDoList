@@ -1,5 +1,4 @@
 // добавить тестты на вывод тасок по дедлайну в service & controller
-// todo контроллер принимает любой дедлайн
 package com.example.todolist.controllers;
 
 

@@ -19,9 +19,9 @@ components:
 
     Deadline:
       enum:
-        - today
-        - week
-        - someday
+        - TODAY
+        - WEEK
+        - SOMEDAY
 
     ErrorResponse:
       type: object
@@ -42,9 +42,7 @@ components:
           type: string
           example: 'Call Maria'
         deadline:
-          type: string
-          items:
-            '$ref': '#/components/schemas/Deadline'
+          '$ref': '#/components/schemas/Deadline'
 
     TaskResponse:
       type: object

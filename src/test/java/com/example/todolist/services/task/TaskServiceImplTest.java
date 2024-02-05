@@ -1,166 +1,190 @@
-//package com.example.todolist.services.task;
-//
-//import com.example.todolist.dtos.TaskDTO;
-//import com.example.todolist.entities.Deadline;
-//import com.example.todolist.entities.Task;
-//import com.example.todolist.entities.User;
-//import com.example.todolist.exceptions.task.TaskNotFoundException;
-//import com.example.todolist.services.user.UserServiceImpl;
-//import io.restassured.RestAssured;
-//import jakarta.annotation.PostConstruct;
-//import org.junit.jupiter.api.AfterAll;
-//import org.junit.jupiter.api.BeforeAll;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.boot.test.web.server.LocalServerPort;
-//import org.springframework.test.context.DynamicPropertyRegistry;
-//import org.springframework.test.context.DynamicPropertySource;
-//import org.testcontainers.containers.PostgreSQLContainer;
-//
-//import java.util.List;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-//class TaskServiceImplTest {
-//    @Autowired
-//    TaskServiceImpl taskService;
-//    @Autowired
-//    UserServiceImpl userService;
-//    @LocalServerPort
-//    private Integer port;
-//    private User user;
-//
-//    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-//            "postgres:15-alpine"
-//    );
-//
-//    @BeforeAll
-//    static void beforeAll() {
-//        postgres.start();
-//    }
-//
-//    @AfterAll
-//    static void afterAll() {
-//        postgres.stop();
-//    }
-//
-//    @DynamicPropertySource
-//    static void configureProperties(DynamicPropertyRegistry registry) {
-//        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-//        registry.add("spring.datasource.username", postgres::getUsername);
-//        registry.add("spring.datasource.password", postgres::getPassword);
-//    }
-//
-//    @PostConstruct
-//    public void oneTimeSetUp() {
-//        user = new User(1, "Dior");
-//
-//    }
-//
-//    @BeforeEach
-//    void setUp() {
-//        RestAssured.baseURI = "http://localhost:" + port;
-//        taskService.deleteAllTasks();
-//        userService.deleteAllUsers();
-//        userService.saveUser(user);
-//        TaskDTO taskDTO = new TaskDTO("Send an e-mail", Deadline.today);
-//        taskService.save(taskDTO);
-//    }
-//
-//    @Test
-//    public void saveTaskTest() {
-//        TaskDTO taskDTO = new TaskDTO("Send an e-mail", Deadline.today);
-//        taskService.save(taskDTO);
-//
-//        List<Task> listOfTasks = taskService.getAllTask();
-//        assertEquals(listOfTasks.size(), 2);
-//    }
-//
-//    @Test
-//    public void getAllTasksTest() {
-//        TaskDTO calling = new TaskDTO("Call Maria", Deadline.week);
-//        TaskDTO mediation = new TaskDTO("Meditate", Deadline.today);
-//        taskService.save(calling);
-//        taskService.save(mediation);
-//
-//        List<Task> tasks = taskService.getAllTask();
-//        assertEquals(tasks.size(), 3);
-//    }
-//
-//    @Test
-//    public void getTaskSuccessTest() {
-//        List<Task> listOfTasks = taskService.getAllTask();
-//        int currentIdOfTask = listOfTasks.get(0).getId();
-//        Task task = taskService.getTask(currentIdOfTask);
-//        assertEquals(task.getDescription(), "Send an e-mail");
-//    }
-//
-//    @Test
-//    public void getTaskFailTest() {
-//        int outOfBoundIndex = taskService.getAllTask().size() + 1;
-//
-//        assertThrows(TaskNotFoundException.class, ()
-//                -> taskService.getTask(outOfBoundIndex));
-//    }
-//
-//    @Test
-//    public void getTaskByDeadline() {
-//
-//    }
-//
-//    @Test
-//    public void editTaskTest() {
-//        int taskToUpdateIndex = taskService.getAllTask().get(0).getId();
-//        assertEquals(taskService.getTask(taskToUpdateIndex).getDescription(), "Send an e-mail");
-//
-//        TaskDTO taskDTO = new TaskDTO("Send an e-mail to Alex", Deadline.today);
-//        taskService.editTask(taskDTO, taskToUpdateIndex);
-//        assertEquals(taskService.getTask(taskToUpdateIndex).getDescription(), "Send an e-mail to Alex");
-//    }
-//
-//    @Test
-//    public void deleteTaskSuccessTest() {
-//        List<Task> allTasks = taskService.getAllTask();
-//        int amountOfTasksBeforeDelete = allTasks.size();
-//        int taskToDeleteIndex = allTasks.get(0).getId();
-//
-//        String result = taskService.deleteTask(taskToDeleteIndex);
-//        int amountOfTasksAfterDelete = taskService.getAllTask().size();
-//
-//        assertEquals(amountOfTasksBeforeDelete - 1, amountOfTasksAfterDelete);
-//        assertEquals("Task with id=" + taskToDeleteIndex + " is deleted.", result);
-//    }
-//
-//    @Test
-//    public void deleteTaskNoTaskFoundTest() {
-//        List<Task> allTasks = taskService.getAllTask();
-//        int amountOfTasksBeforeDelete = allTasks.size();
-//        int taskToDeleteIndex = amountOfTasksBeforeDelete + 1;
-//
-//        assertThrows(TaskNotFoundException.class, ()->{
-//            taskService.deleteTask(taskToDeleteIndex);
-//        });
-//
-//        int amountOfTasksAfterDelete = taskService.getAllTask().size();
-//        assertEquals(amountOfTasksBeforeDelete, amountOfTasksAfterDelete);
-//    }
-//
-//    @Test
-//    public void deleteAllTasksTest() {
-//        taskService.deleteAllTasks();
-//        List<Task> remainingTasks = taskService.getAllTask();
-//        assertEquals(0, remainingTasks.size());
-//    }
-//
-//    @Test
-//    void testTaskNotFoundExceptionMessage() {
-//        TaskNotFoundException exception = assertThrows(
-//                TaskNotFoundException.class,
-//                () -> { throw new TaskNotFoundException(1); }
-//        );
-//        assertEquals("Could not find a task with id 1.",  exception.getMessage());
-//    }
-//}
+package com.example.todolist.services.task;
+
+import com.example.todolist.api.v1.dto.DeadlineDto;
+import com.example.todolist.api.v1.dto.PaginationDto;
+import com.example.todolist.api.v1.dto.TaskRequestDto;
+import com.example.todolist.api.v1.dto.TaskResponseDto;
+import com.example.todolist.entities.Deadline;
+import com.example.todolist.entities.Task;
+import com.example.todolist.entities.User;
+import com.example.todolist.exceptions.ItemNotFoundException;
+import com.example.todolist.services.user.UserServiceImpl;
+import io.restassured.RestAssured;
+import jakarta.annotation.PostConstruct;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class TaskServiceImplTest {
+    @Autowired
+    TaskServiceImpl taskService;
+    @Autowired
+    UserServiceImpl userService;
+    @LocalServerPort
+    private Integer port;
+    private User user;
+    private TaskRequestDto taskRequestDto;
+    private PaginationDto paginationDto;
+
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
+            "postgres:15-alpine"
+    );
+
+    @BeforeAll
+    static void beforeAll() {
+        postgres.start();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        postgres.stop();
+    }
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        user = new User(1, "Kot");
+    }
+
+    @BeforeEach
+    void beforeEach() {
+        RestAssured.baseURI = "http://localhost:" + port;
+        taskService.deleteAll(); ;
+        userService.deleteAllUsers();
+        userService.saveUser(user);
+        taskRequestDto = new TaskRequestDto();
+        taskRequestDto.setDescription("Call Maria");
+        taskRequestDto.setDeadline(DeadlineDto.TODAY);
+
+        taskService.save(taskRequestDto);
+        paginationDto = new PaginationDto();
+        paginationDto.setLimit(10);
+        paginationDto.setOffset(0);
+    }
+
+    @Test
+    public void saveTest() {
+        taskService.save(taskRequestDto);
+        taskService.get(paginationDto);
+        List<TaskResponseDto> listOfTasks = taskService.get(paginationDto);
+        assertEquals(listOfTasks.size(), 2);
+    }
+
+    @Test
+    public void getTest() {
+        taskService.save(taskRequestDto);
+        List<TaskResponseDto> listOfTasks = taskService.get(paginationDto);
+        assertEquals(2, listOfTasks.size());
+    }
+
+    @Test
+    public void getNoTasksTest() {
+        taskService.deleteAll();
+        List<TaskResponseDto> listOfTasks = taskService.get(paginationDto);
+        assertEquals(0, listOfTasks.size());
+    }
+
+    @Test
+    public void getNoPaginationTest() {
+        assertThrows(
+                ItemNotFoundException.class,
+                () -> taskService.get(new PaginationDto())
+        );
+    }
+
+    @Test
+    public void getByIdTest() {
+        Long newTaskId = taskService.save(taskRequestDto).getId();
+        TaskResponseDto taskToFind = taskService.findById(newTaskId);
+        assertNotNull(taskToFind);
+    }
+
+    @Test
+    public void getByIdNoTaskFoundTest() {
+        Integer outOfBoundIndex = taskService.get(paginationDto).size() + 1;
+        assertThrows(ItemNotFoundException.class, ()
+                -> taskService.findById(outOfBoundIndex.longValue()));
+    }
+
+    @Test
+    public void getTaskByDeadlineTest() {
+        taskService.save(taskRequestDto);
+        assertEquals(2,
+                taskService.findByDeadline(DeadlineDto.TODAY)
+                        .size()
+        );
+    }
+
+    @Test
+    public void editTest() {
+        TaskResponseDto taskToEdit = taskService.save(taskRequestDto);
+        Long taskToEditId = taskToEdit.getId();
+
+        TaskRequestDto dtoForTaskUpdate = new TaskRequestDto();
+        dtoForTaskUpdate.setDescription("Call Robert");
+        dtoForTaskUpdate.setDeadline(DeadlineDto.SOMEDAY);
+
+        TaskResponseDto updatedTask = taskService.edit(taskToEditId, dtoForTaskUpdate);
+        assertEquals(taskToEditId, updatedTask.getId());
+        assertEquals("Call Robert", updatedTask.getDescription());
+        assertEquals(Deadline.SOMEDAY.name(), updatedTask.getDeadline());
+    }
+
+    @Test
+    public void editTaskNotFoundTest() {
+       Integer outOfBoundsIndex = taskService.findAll().size() + 1;
+       assertThrows(ItemNotFoundException.class, () -> taskService.edit(outOfBoundsIndex.longValue(),
+               new TaskRequestDto()));
+    }
+
+    @Test
+    public void deleteTest() {
+        List<Task> allTasks = taskService.findAll();
+        int amountOfTasksBeforeDelete = allTasks.size();
+        assertTrue(amountOfTasksBeforeDelete > 0);
+
+        assertEquals("Task is deleted.",
+                taskService.deleteById(allTasks.get(0).getId()));
+        assertEquals(amountOfTasksBeforeDelete - 1, taskService.findAll().size());
+    }
+
+    @Test
+    public void deleteNoTaskFoundTest() {
+        List<Task> allTasks = taskService.findAll();
+        Integer outOfBoundsIndex =  allTasks.size() + 1;
+        assertThrows(ItemNotFoundException.class, () -> taskService.deleteById(outOfBoundsIndex.longValue()));
+    }
+
+    @Test
+    public void deleteAllTest() {
+        assertFalse(taskService.findAll().isEmpty());
+        taskService.deleteAll();
+        assertEquals(0, taskService.findAll().size());
+    }
+
+    @Test
+    public void findAllTest() {
+        taskService.deleteAll();
+        taskService.save(taskRequestDto);
+        taskService.save(taskRequestDto);
+        assertEquals(2, taskService.findAll().size());
+    }
+}

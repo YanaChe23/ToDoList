@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskResponseDto save(TaskRequestDto taskRequestDto) {
         Task task = modelMapper.map(taskRequestDto, Task.class);
-        // TODO remove once auth is added
+        // TODO remove once auth is added; add author id validation
         task.setUserId(1);
         return modelMapper.map(
                 saveToDatabase(task), TaskResponseDto.class
@@ -71,11 +72,17 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<TaskResponseDto> findByDeadline(DeadlineDto deadlineDto) {
-        return taskRepository.findByDeadline(Deadline.valueOf(deadlineDto.getValue()))
-                .stream().
-                map(
+        List<String> allowedDeadlines = Deadline.getNames();
+        String dtoDeadlineValue = deadlineDto.getValue();
+
+        if (!allowedDeadlines.contains(dtoDeadlineValue))
+            throw new ItemNotFoundException("Failed to find a deadline value " + dtoDeadlineValue);
+        return taskRepository.findByDeadline(Deadline.valueOf(dtoDeadlineValue))
+                .stream()
+                .map(
                     t -> modelMapper.map(t, TaskResponseDto.class)
-                ).toList();
+                )
+                .toList();
     }
 
     @Override
@@ -85,6 +92,8 @@ public class TaskServiceImpl implements TaskService {
         );
         Task editedTask = modelMapper.map(taskRequestDto, Task.class);
         editedTask.setId(taskToSave.getId());
+        // TODO remove once auth is added; add author id validation
+        editedTask.setUserId(1);
         return modelMapper.map(
                 saveToDatabase(editedTask), TaskResponseDto.class
         );
@@ -95,6 +104,11 @@ public class TaskServiceImpl implements TaskService {
         findById(id);
         taskRepository.deleteById(id);
         return "Task is deleted.";
+    }
+
+    @Override
+    public List<Task> findAll() {
+        return taskRepository.findAll();
     }
 
     void deleteAll() {
