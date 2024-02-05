@@ -5,7 +5,6 @@ import com.example.todolist.api.v1.dto.PaginationDto;
 import com.example.todolist.api.v1.dto.TaskRequestDto;
 import com.example.todolist.api.v1.dto.TaskResponseDto;
 import com.example.todolist.entities.Deadline;
-import com.example.todolist.entities.Task;
 import com.example.todolist.entities.User;
 import com.example.todolist.exceptions.ItemNotFoundException;
 import com.example.todolist.services.user.UserServiceImpl;
@@ -150,41 +149,33 @@ class TaskServiceImplTest {
 
     @Test
     public void editTaskNotFoundTest() {
-       Integer outOfBoundsIndex = taskService.findAll().size() + 1;
+       Integer outOfBoundsIndex = taskService.get(paginationDto).size() + 1;
        assertThrows(ItemNotFoundException.class, () -> taskService.edit(outOfBoundsIndex.longValue(),
                new TaskRequestDto()));
     }
 
     @Test
     public void deleteTest() {
-        List<Task> allTasks = taskService.findAll();
+        List<TaskResponseDto> allTasks = taskService.get(paginationDto);
         int amountOfTasksBeforeDelete = allTasks.size();
         assertTrue(amountOfTasksBeforeDelete > 0);
 
         assertEquals("Task is deleted.",
                 taskService.deleteById(allTasks.get(0).getId()));
-        assertEquals(amountOfTasksBeforeDelete - 1, taskService.findAll().size());
+        assertEquals(amountOfTasksBeforeDelete - 1, taskService.get(paginationDto).size());
     }
 
     @Test
     public void deleteNoTaskFoundTest() {
-        List<Task> allTasks = taskService.findAll();
+        List<TaskResponseDto> allTasks = taskService.get(paginationDto);
         Integer outOfBoundsIndex =  allTasks.size() + 1;
         assertThrows(ItemNotFoundException.class, () -> taskService.deleteById(outOfBoundsIndex.longValue()));
     }
 
     @Test
     public void deleteAllTest() {
-        assertFalse(taskService.findAll().isEmpty());
+        assertFalse(taskService.get(paginationDto).isEmpty());
         taskService.deleteAll();
-        assertEquals(0, taskService.findAll().size());
-    }
-
-    @Test
-    public void findAllTest() {
-        taskService.deleteAll();
-        taskService.save(taskRequestDto);
-        taskService.save(taskRequestDto);
-        assertEquals(2, taskService.findAll().size());
+        assertEquals(0, taskService.get(paginationDto).size());
     }
 }

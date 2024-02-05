@@ -16,5 +16,4 @@ public interface TaskService {
     List<TaskResponseDto> findByDeadline(DeadlineDto deadlineDto);
     TaskResponseDto edit(Long id, TaskRequestDto taskRequestDto);
     String deleteById(Long id);
-    List<Task> findAll();
 }

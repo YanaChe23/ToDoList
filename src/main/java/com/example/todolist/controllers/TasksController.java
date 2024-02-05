@@ -28,13 +28,6 @@ public class TasksController implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<List<TaskResponseDto>> tasksDeadlineDeadlineGet(@PathVariable DeadlineDto deadlineDto) {
-        return ResponseEntity.ok(
-                taskServiceImpl.findByDeadline(deadlineDto)
-        );
-    }
-
-    @Override
     public ResponseEntity<List<TaskResponseDto>> tasksGet(PaginationDto pagination) {
         return ResponseEntity.ok(
                 taskServiceImpl.get(pagination)
@@ -45,6 +38,13 @@ public class TasksController implements TasksApi {
     public ResponseEntity<TaskResponseDto> tasksIdGet(Long id) {
         return ResponseEntity.ok(
                 taskServiceImpl.findById(id)
+        );
+    }
+
+    @Override
+    public ResponseEntity<List<TaskResponseDto>> tasksDeadlineDeadlineGet(@PathVariable DeadlineDto deadlineDto) {
+        return ResponseEntity.ok(
+                taskServiceImpl.findByDeadline(deadlineDto)
         );
     }
 

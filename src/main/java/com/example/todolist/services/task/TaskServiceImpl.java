@@ -103,12 +103,7 @@ public class TaskServiceImpl implements TaskService {
     public String deleteById(Long id) {
         findById(id);
         taskRepository.deleteById(id);
-        return "Task is deleted.";
-    }
-
-    @Override
-    public List<Task> findAll() {
-        return taskRepository.findAll();
+        return "Task is deleted";
     }
 
     void deleteAll() {
