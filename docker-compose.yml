@@ -12,7 +12,7 @@ services:
 
   app:
     build: .
-    image: mynodeapp
+    image: todolist
     depends_on:
       - db
     ports:
