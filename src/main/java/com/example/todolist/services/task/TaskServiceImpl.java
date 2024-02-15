@@ -59,17 +59,14 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskResponseDto findByIdDto(Long id) {
-        Optional<Task> optionalTask = taskRepository.findById(id);
-        optionalTask.orElseThrow(() -> new ItemNotFoundException("Can't find a task with an id " + id));
-        return taskDtoMapper.toDto(optionalTask.get());
+        Task foundTask = findById(id);
+        return taskDtoMapper.toDto(foundTask);
     }
 
     public Task findById(Long id) {
         Optional<Task> optionalTask = taskRepository.findById(id);
         optionalTask.orElseThrow(() -> new ItemNotFoundException("Can't find a task with an id " + id));
-        return
-                optionalTask.get();
-
+        return optionalTask.get();
     }
 
     @Override

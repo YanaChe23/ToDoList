@@ -45,7 +45,7 @@ class TaskDtoMapperTest {
         taskRequestDto.setDeadline(DeadlineDto.TODAY);
         taskRequestDto.setDescription("Call Maria");
 
-        when(userService.getUser(1L)).thenReturn(user);
+        when(userService.findById(1L)).thenReturn(user);
     }
 
     @Test

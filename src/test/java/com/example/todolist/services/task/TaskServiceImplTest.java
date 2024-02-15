@@ -61,7 +61,7 @@ class TaskServiceImplTest {
     public void postConstruct() {
         User user = new User("Kot");
         user.setId(1L);
-        User savedUser =  userService.saveUser(user);
+        User savedUser =  userService.save(user);
 
         taskRequestDto = new TaskRequestDto();
         taskRequestDto.setDescription("Call Maria");
