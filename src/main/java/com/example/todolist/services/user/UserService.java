@@ -5,10 +5,8 @@ import com.example.todolist.entities.User;
 import java.util.List;
 
 public interface UserService {
-    List<User> getAllUsers();
-    void saveUser(User user);
-    User getUser(int id);
-    void deleteUser(int id);
-    void deleteAllUsers();
-    List<User> findAllUsers();
+    List<User> get();
+    User save(User user);
+    User findById(Long id);
+    void deleteById(Long id);
 }

@@ -126,7 +126,7 @@ class TasksControllerTest {
 
     @Test
     public void tasksIdGetTest() throws Exception {
-        when(taskService.findById(1L)).thenReturn(emailResponse);
+        when(taskService.findByIdDto(1L)).thenReturn(emailResponse);
         this.mockMvc.perform(get("/tasks/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("{\"id\":1," +
@@ -137,7 +137,7 @@ class TasksControllerTest {
 
     @Test
     public void tasksIdGetNoTaskFoundTest() throws Exception {
-        when(taskService.findById(1L)).thenThrow(new ItemNotFoundException("Can't find a task with anb id 1"));
+        when(taskService.findByIdDto(1L)).thenThrow(new ItemNotFoundException("Can't find a task with anb id 1"));
         this.mockMvc.perform(get("/tasks/1"))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().string("{\"info\":\"Can't find a task with anb id 1\"}"));

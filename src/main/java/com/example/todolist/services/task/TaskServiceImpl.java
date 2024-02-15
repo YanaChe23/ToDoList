@@ -9,9 +9,10 @@ import com.example.todolist.entities.Task;
 
 import com.example.todolist.exceptions.FailedToSaveException;
 import com.example.todolist.exceptions.ItemNotFoundException;
+import com.example.todolist.exceptions.UserIdRequiredException;
+import com.example.todolist.mapper.TaskDtoMapper;
 import com.example.todolist.repositories.TaskRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,18 +26,14 @@ import org.springframework.stereotype.Service;
 public class TaskServiceImpl implements TaskService {
     @Autowired
     private TaskRepository taskRepository;
-
     @Autowired
-    private ModelMapper modelMapper;
+    private TaskDtoMapper taskDtoMapper;
+
 
     @Override
     public TaskResponseDto save(TaskRequestDto taskRequestDto) {
-        Task task = modelMapper.map(taskRequestDto, Task.class);
-        // TODO remove once auth is added; add author id validation
-        task.setUserId(1);
-        return modelMapper.map(
-                saveToDatabase(task), TaskResponseDto.class
-        );
+        Task task = taskDtoMapper.toEntity(taskRequestDto);
+        return taskDtoMapper.toDto(saveToDatabase(task));
     }
 
     private Task saveToDatabase(Task task) {
@@ -56,17 +53,20 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository.findAll(pageable)
                 .stream()
                 .map(
-                        t -> modelMapper.map(t, TaskResponseDto.class)
+                        t -> taskDtoMapper.toDto(t)
                 ).toList();
     }
 
     @Override
-    public TaskResponseDto findById(Long id) {
+    public TaskResponseDto findByIdDto(Long id) {
+        Task foundTask = findById(id);
+        return taskDtoMapper.toDto(foundTask);
+    }
+
+    public Task findById(Long id) {
         Optional<Task> optionalTask = taskRepository.findById(id);
         optionalTask.orElseThrow(() -> new ItemNotFoundException("Can't find a task with an id " + id));
-        return modelMapper.map(
-                optionalTask.get(), TaskResponseDto.class
-        );
+        return optionalTask.get();
     }
 
     @Override
@@ -79,22 +79,19 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository.findByDeadline(Deadline.valueOf(dtoDeadlineValue))
                 .stream()
                 .map(
-                    t -> modelMapper.map(t, TaskResponseDto.class)
+                        t -> taskDtoMapper.toDto(t)
                 )
                 .toList();
     }
 
     @Override
     public TaskResponseDto edit(Long id, TaskRequestDto taskRequestDto) {
-        Task taskToSave = modelMapper.map(
-                findById(id), Task.class
-        );
-        Task editedTask = modelMapper.map(taskRequestDto, Task.class);
+        if (taskRequestDto.getUserId() == null) throw new UserIdRequiredException();
+        Task taskToSave = findById(id);
+        Task editedTask = taskDtoMapper.toEntity(taskRequestDto);
         editedTask.setId(taskToSave.getId());
-        // TODO remove once auth is added; add author id validation
-        editedTask.setUserId(1);
-        return modelMapper.map(
-                saveToDatabase(editedTask), TaskResponseDto.class
+        return taskDtoMapper.toDto(
+                saveToDatabase(editedTask)
         );
     }
 

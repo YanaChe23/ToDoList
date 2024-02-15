@@ -34,7 +34,7 @@ public class TasksController implements TasksApi {
     @Override
     public ResponseEntity<TaskResponseDto> tasksIdGet(Long id) {
         return ResponseEntity.ok(
-                taskServiceImpl.findById(id)
+                taskServiceImpl.findByIdDto(id)
         );
     }
 
