@@ -21,7 +21,7 @@ public class User {
     private Long id;
     @Column(name="name")
     private String name;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<Task> tasks;
 
     public User(String name) {

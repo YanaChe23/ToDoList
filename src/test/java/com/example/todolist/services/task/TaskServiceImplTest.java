@@ -28,12 +28,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TaskServiceImplTest {
     @Autowired
-    TaskServiceImpl taskService;
+    private TaskServiceImpl taskService;
     @Autowired
-    UserServiceImpl userService;
+    private UserServiceImpl userService;
     @LocalServerPort
     private Integer port;
-    private User user;
     private TaskRequestDto taskRequestDto;
     private PaginationDto paginationDto;
 
@@ -60,23 +59,25 @@ class TaskServiceImplTest {
 
     @PostConstruct
     public void postConstruct() {
-        user = new User("Kot");
+        User user = new User("Kot");
+        user.setId(1L);
+        User savedUser =  userService.saveUser(user);
+
+        taskRequestDto = new TaskRequestDto();
+        taskRequestDto.setDescription("Call Maria");
+        taskRequestDto.setDeadline(DeadlineDto.TODAY);
+        taskRequestDto.setUserId(savedUser.getId());
+
+        paginationDto = new PaginationDto();
+        paginationDto.setLimit(10);
+        paginationDto.setOffset(0);
+
     }
 
     @BeforeEach
     void beforeEach() {
         RestAssured.baseURI = "http://localhost:" + port;
-        taskService.deleteAll(); ;
-        userService.deleteAllUsers();
-        userService.saveUser(user);
-        taskRequestDto = new TaskRequestDto();
-        taskRequestDto.setDescription("Call Maria");
-        taskRequestDto.setDeadline(DeadlineDto.TODAY);
-
-        taskService.save(taskRequestDto);
-        paginationDto = new PaginationDto();
-        paginationDto.setLimit(10);
-        paginationDto.setOffset(0);
+        taskService.deleteAll();
     }
 
     @Test
@@ -84,14 +85,15 @@ class TaskServiceImplTest {
         taskService.save(taskRequestDto);
         taskService.get(paginationDto);
         List<TaskResponseDto> listOfTasks = taskService.get(paginationDto);
-        assertEquals(listOfTasks.size(), 2);
+        assertEquals(listOfTasks.size(), 1);
+        assertEquals(1, 1);
     }
 
     @Test
     public void getTest() {
         taskService.save(taskRequestDto);
         List<TaskResponseDto> listOfTasks = taskService.get(paginationDto);
-        assertEquals(2, listOfTasks.size());
+        assertEquals(1, listOfTasks.size());
     }
 
     @Test
@@ -126,7 +128,7 @@ class TaskServiceImplTest {
     @Test
     public void getTaskByDeadlineTest() {
         taskService.save(taskRequestDto);
-        assertEquals(2,
+        assertEquals(1,
                 taskService.findByDeadline(DeadlineDto.TODAY)
                         .size()
         );
@@ -140,6 +142,7 @@ class TaskServiceImplTest {
         TaskRequestDto dtoForTaskUpdate = new TaskRequestDto();
         dtoForTaskUpdate.setDescription("Call Robert");
         dtoForTaskUpdate.setDeadline(DeadlineDto.SOMEDAY);
+        dtoForTaskUpdate.setUserId(1L);
 
         TaskResponseDto updatedTask = taskService.edit(taskToEditId, dtoForTaskUpdate);
         assertEquals(taskToEditId, updatedTask.getId());
@@ -151,11 +154,12 @@ class TaskServiceImplTest {
     public void editTaskNotFoundTest() {
        Integer outOfBoundsIndex = taskService.get(paginationDto).size() + 1;
        assertThrows(ItemNotFoundException.class, () -> taskService.edit(outOfBoundsIndex.longValue(),
-               new TaskRequestDto()));
+               taskRequestDto));
     }
 
     @Test
     public void deleteTest() {
+        taskService.save(taskRequestDto);
         List<TaskResponseDto> allTasks = taskService.get(paginationDto);
         int amountOfTasksBeforeDelete = allTasks.size();
         assertTrue(amountOfTasksBeforeDelete > 0);
@@ -174,6 +178,7 @@ class TaskServiceImplTest {
 
     @Test
     public void deleteAllTest() {
+        taskService.save(taskRequestDto);
         assertFalse(taskService.get(paginationDto).isEmpty());
         taskService.deleteAll();
         assertEquals(0, taskService.get(paginationDto).size());

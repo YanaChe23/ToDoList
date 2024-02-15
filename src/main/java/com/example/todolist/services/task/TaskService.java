@@ -13,7 +13,6 @@ public interface TaskService {
     List<TaskResponseDto> get(PaginationDto paginationDto);
     Task findById(Long id);
     TaskResponseDto findByIdDto(Long id);
-
     List<TaskResponseDto> findByDeadline(DeadlineDto deadlineDto);
     TaskResponseDto edit(Long id, TaskRequestDto taskRequestDto);
     String deleteById(Long id);

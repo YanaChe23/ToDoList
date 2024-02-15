@@ -20,8 +20,7 @@ public class Task {
     @Column(name="deadline")
     @Enumerated(EnumType.STRING)
     private Deadline deadline;
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name="user_id")
     private User user;
 
@@ -34,7 +33,7 @@ public class Task {
     public String toString() {
         return "Task{" +
                 "id=" + id + '\'' +
-                "user id" + user.getId() + '\'' +
+                ", user_id=" + user.getId() + '\'' +
                 ", description='" + description + '\'' +
                 ", deadline=" + deadline +
                 '}';

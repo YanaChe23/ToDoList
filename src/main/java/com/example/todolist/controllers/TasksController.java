@@ -67,4 +67,12 @@ public class TasksController implements TasksApi {
                 taskServiceImpl.deleteById(id)
         );
     }
+
+    @GetMapping("/test")
+    public void tst() {
+        User user = new User("Kot");
+        user.setId(1L);
+        System.out.println("!!!!!!! " + user);
+        userRepository.save(user);
+    }
 }
