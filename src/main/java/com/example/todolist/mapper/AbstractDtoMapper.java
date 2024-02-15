@@ -4,13 +4,15 @@ import jakarta.annotation.PostConstruct;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
 @Component
 public abstract class AbstractDtoMapper<E, S, D> implements DtoMapper<E, S, D> {
-    ModelMapper mapper = new ModelMapper();
+    @Autowired
+    ModelMapper mapper;
     private final Class<E> e;
     private final Class<S> s;
     private final Class<D> d;

@@ -32,22 +32,20 @@ public class TaskDtoMapper extends AbstractDtoMapper<Task, TaskRequestDto, TaskR
 
     @Override
     public void mapSpecificFieldsToEntity(TaskRequestDto source, Task destination) {
-//        System.out.println(userService.getAllUsers());
-//        Optional.ofNullable(source.getUserId()).ifPresent(
-//                id -> destination.setUser(
-//                        regularMapper.map(
-//                                userService.getUser(id),
-//                                User.class)
-//                )
-//        );
+        Optional.ofNullable(source.getUserId()).ifPresent(
+                id -> destination.setUser(
+                        regularMapper.map(
+                                userService.findById(id),
+                                User.class)
+                )
+        );
     }
 
     @Override
     public void mapSpecificFieldsToDto(Task source, TaskResponseDto destination) {
-//        Optional.ofNullable(source.getUser()).ifPresent(
-//                category -> destination.setUserId(category.getId())
-//        );
-
+        Optional.ofNullable(source.getUser()).ifPresent(
+                category -> destination.setUserId(category.getId())
+        );
     }
 
     private void setMapperConfigs() {

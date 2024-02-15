@@ -86,7 +86,6 @@ class TaskServiceImplTest {
         taskService.get(paginationDto);
         List<TaskResponseDto> listOfTasks = taskService.get(paginationDto);
         assertEquals(listOfTasks.size(), 1);
-        assertEquals(1, 1);
     }
 
     @Test

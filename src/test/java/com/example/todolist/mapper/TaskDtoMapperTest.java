@@ -7,6 +7,7 @@ import com.example.todolist.entities.Deadline;
 import com.example.todolist.entities.Task;
 import com.example.todolist.entities.User;
 
+import com.example.todolist.exceptions.ItemNotFoundException;
 import com.example.todolist.services.user.UserServiceImpl;
 import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.Test;
@@ -49,7 +50,7 @@ class TaskDtoMapperTest {
     }
 
     @Test
-    void mapSpecificFieldsToEntity() {
+    void mapSpecificFieldsToEntityTest() {
         Task mappedTask = taskDtoMapper.toEntity(taskRequestDto);
 
         assertEquals(taskRequestDto.getDescription(), mappedTask.getDescription());
@@ -59,7 +60,7 @@ class TaskDtoMapperTest {
     }
 
     @Test
-    void mapSpecificFieldsToDto() {
+    void mapSpecificFieldsToDtoTest() {
         TaskResponseDto mappedDto = taskDtoMapper.toDto(task);
 
         assertEquals(task.getDescription(), mappedDto.getDescription());

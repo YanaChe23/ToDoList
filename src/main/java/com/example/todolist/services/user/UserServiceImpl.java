@@ -1,6 +1,8 @@
 package com.example.todolist.services.user;
 
+import com.example.todolist.entities.Task;
 import com.example.todolist.entities.User;
+import com.example.todolist.exceptions.ItemNotFoundException;
 import com.example.todolist.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,8 +24,9 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public User findById(Long id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.orElse(null);
+        Optional<User> optionalUser = userRepository.findById(id);
+        optionalUser.orElseThrow(() -> new ItemNotFoundException("Can't find a user with an id " + id));
+        return optionalUser.get();
     }
 
     @Override
