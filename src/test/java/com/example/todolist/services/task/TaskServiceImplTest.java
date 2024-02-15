@@ -60,7 +60,7 @@ class TaskServiceImplTest {
 
     @PostConstruct
     public void postConstruct() {
-        user = new User(1, "Kot");
+        user = new User("Kot");
     }
 
     @BeforeEach
@@ -112,7 +112,7 @@ class TaskServiceImplTest {
     @Test
     public void getByIdTest() {
         Long newTaskId = taskService.save(taskRequestDto).getId();
-        TaskResponseDto taskToFind = taskService.findById(newTaskId);
+        TaskResponseDto taskToFind = taskService.findByIdDto(newTaskId);
         assertNotNull(taskToFind);
     }
 

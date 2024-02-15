@@ -5,7 +5,8 @@ import lombok.*;
 
 @Entity
 @Table(name="tasks")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Task {
@@ -14,12 +15,29 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_generator")
     @SequenceGenerator(name = "task_generator", sequenceName = "task_id_gen", allocationSize = 1)
     private Long id;
-    @Column(name="user_id")
-    private int userId;
     @Column(name="description")
     private String description;
     @Column(name="deadline")
     @Enumerated(EnumType.STRING)
     private Deadline deadline;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
+    @JoinColumn(name="user_id")
+    private User user;
+
+    public Task(String description, Deadline deadline) {
+        this.description = description;
+        this.deadline = deadline;
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id + '\'' +
+                "user id" + user.getId() + '\'' +
+                ", description='" + description + '\'' +
+                ", deadline=" + deadline +
+                '}';
+    }
 }
 

@@ -43,6 +43,11 @@ components:
           example: 'Call Maria'
         deadline:
           '$ref': '#/components/schemas/Deadline'
+        user_id:
+          type: integer
+          format: int64
+          example: 115
+
 
     TaskResponse:
       type: object
@@ -61,7 +66,6 @@ components:
         deadline:
           type: string
           example: 'today'
-
 
 paths:
   /tasks:

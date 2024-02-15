@@ -126,7 +126,7 @@ class TasksControllerTest {
 
     @Test
     public void tasksIdGetTest() throws Exception {
-        when(taskService.findById(1L)).thenReturn(emailResponse);
+        when(taskService.findByIdDto(1L)).thenReturn(emailResponse);
         this.mockMvc.perform(get("/tasks/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("{\"id\":1," +

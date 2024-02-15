@@ -21,13 +21,13 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
     @Override
-    public User getUser(int id) {
+    public User getUser(Long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) return user.get();
         return null;
     }
     @Override
-    public void deleteUser(int id) {
+    public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
 
