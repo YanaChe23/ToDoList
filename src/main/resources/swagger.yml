@@ -48,7 +48,6 @@ components:
           format: int64
           example: 115
 
-
     TaskResponse:
       type: object
       properties:
@@ -66,6 +65,32 @@ components:
         deadline:
           type: string
           example: 'today'
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 100
+        name:
+          type: string
+          example: 'Alex'
+        email:
+          format: email
+          example: 'abc@mail.com'
+
+    UserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: 'Alex'
+        email:
+          format: email
+          example: 'abc@mail.com'
+        password:
+          type: string
+          example: '1234'
 
 paths:
   /tasks:
@@ -239,3 +264,29 @@ paths:
                 type: array
                 items:
                   '$ref': '#/components/schemas/TaskResponse'
+
+  /users:
+    post:
+      summary: 'Crate a user'
+      description: 'Registers a new user'
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              '$ref': '#/components/schemas/UserRequest'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/UserResponse'
+        '400':
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/ErrorResponse'

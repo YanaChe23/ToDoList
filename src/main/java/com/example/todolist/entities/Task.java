@@ -29,14 +29,14 @@ public class Task {
         this.deadline = deadline;
     }
 
-    @Override
-    public String toString() {
-        return "Task{" +
-                "id=" + id + '\'' +
-                ", user_id=" + user.getId() + '\'' +
-                ", description='" + description + '\'' +
-                ", deadline=" + deadline +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "Task{" +
+//                "id=" + id + '\'' +
+//                ", user_id=" + user.getId() + '\'' +
+//                ", description='" + description + '\'' +
+//                ", deadline=" + deadline +
+//                '}';
+//    }
 }
 

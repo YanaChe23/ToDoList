@@ -3,3 +3,5 @@ databaseChangeLog:
       file: //db/changelog/migration/v0001.sql
   - include:
       file: //db/changelog/migration/v0002.sql
+  - include:
+      file: //db/changelog/migration/v0003.sql
