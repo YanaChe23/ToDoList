@@ -6,16 +6,16 @@ import com.example.todolist.api.v1.dto.TaskRequestDto;
 import com.example.todolist.api.v1.dto.TaskResponseDto;
 import com.example.todolist.api.v1.rest.TasksApi;
 import com.example.todolist.services.task.TaskServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class TasksController implements TasksApi {
-    @Autowired
-    TaskServiceImpl taskServiceImpl;
+    private final TaskServiceImpl taskServiceImpl;
 
     @Override
     public ResponseEntity<TaskResponseDto> tasksPost(TaskRequestDto taskRequestDto) {

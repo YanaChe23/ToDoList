@@ -42,7 +42,7 @@ public class SpringConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username ->  userRepository.findByEmail(username)
+        return username -> userRepository.findByEmail(username)
                 .orElseThrow(() -> new ItemNotFoundException("User with email "  + username + " not found."));
     }
 

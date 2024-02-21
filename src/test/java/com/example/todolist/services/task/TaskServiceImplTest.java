@@ -1,9 +1,6 @@
 package com.example.todolist.services.task;
 
-import com.example.todolist.api.v1.dto.DeadlineDto;
-import com.example.todolist.api.v1.dto.PaginationDto;
-import com.example.todolist.api.v1.dto.TaskRequestDto;
-import com.example.todolist.api.v1.dto.TaskResponseDto;
+import com.example.todolist.api.v1.dto.*;
 import com.example.todolist.entities.Deadline;
 import com.example.todolist.entities.User;
 import com.example.todolist.exceptions.ItemNotFoundException;
@@ -59,9 +56,11 @@ class TaskServiceImplTest {
 
     @PostConstruct
     public void postConstruct() {
-        User user = new User("Kot");
-        user.setId(1L);
-        User savedUser =  userService.save(user);
+        UserRequestDto user = new UserRequestDto();
+        user.setName("John");
+        user.setEmail("john@mail.com");
+        user.setPassword("john");
+        UserResponseDto savedUser = userService.save(user);
 
         taskRequestDto = new TaskRequestDto();
         taskRequestDto.setDescription("Call Maria");

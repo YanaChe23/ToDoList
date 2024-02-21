@@ -2,23 +2,26 @@ package com.example.todolist.services.user;
 
 import com.example.todolist.api.v1.dto.UserRequestDto;
 import com.example.todolist.api.v1.dto.UserResponseDto;
+import com.example.todolist.entities.Role;
 import com.example.todolist.entities.Task;
 import com.example.todolist.entities.User;
 import com.example.todolist.exceptions.ItemNotFoundException;
 import com.example.todolist.repositories.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private ModelMapper modelMapper;
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
     @Override
     public List<User> get() {
         return userRepository.findAll();
@@ -26,7 +29,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto save(UserRequestDto userRequestDto) {
         User userToSave = modelMapper.map(userRequestDto, User.class);
-        return modelMapper.map(userRepository.save(userToSave), UserResponseDto.class);
+        userToSave.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
+        System.out.println("userRequestDto.getPassword(): " + userRequestDto.getPassword());
+        System.out.println("enc: " + passwordEncoder.encode(userRequestDto.getPassword()));
+        userToSave.setRole(Role.USER);
+        return modelMapper.map(
+                userRepository.save(userToSave),
+                UserResponseDto.class
+        );
     }
     @Override
     public User findById(Long id) {

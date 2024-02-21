@@ -71,6 +71,7 @@ components:
       properties:
         id:
           type: integer
+          format: int64
           example: 100
         name:
           type: string
@@ -86,6 +87,18 @@ components:
           type: string
           example: 'Alex'
         email:
+          type: string
+          format: email
+          example: 'abc@mail.com'
+        password:
+          type: string
+          example: '1234'
+
+    AuthRequest:
+      type: object
+      properties:
+        email:
+          type: string
           format: email
           example: 'abc@mail.com'
         password:
@@ -265,7 +278,7 @@ paths:
                 items:
                   '$ref': '#/components/schemas/TaskResponse'
 
-  /users:
+  /users/new:
     post:
       summary: 'Crate a user'
       description: 'Registers a new user'
