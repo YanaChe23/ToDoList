@@ -30,8 +30,6 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto save(UserRequestDto userRequestDto) {
         User userToSave = modelMapper.map(userRequestDto, User.class);
         userToSave.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
-        System.out.println("userRequestDto.getPassword(): " + userRequestDto.getPassword());
-        System.out.println("enc: " + passwordEncoder.encode(userRequestDto.getPassword()));
         userToSave.setRole(Role.USER);
         return modelMapper.map(
                 userRepository.save(userToSave),
@@ -53,4 +51,10 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteAll();
     }
 
+    @Override
+    public User findByEmail(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        optionalUser.orElseThrow(() -> new ItemNotFoundException("User with email "  + email + " not found."));
+        return optionalUser.get();
+    }
 }

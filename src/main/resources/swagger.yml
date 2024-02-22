@@ -4,8 +4,13 @@ info:
   version: 0.0.1
 
 components:
-  schemas:
+  securitySchemes:
+    bearerAuth:
+     type: http
+     scheme: bearer
+     bearerFormat: JWT
 
+  schemas:
     Pagination:
       type: object
       properties:
@@ -104,6 +109,13 @@ components:
         password:
           type: string
           example: '1234'
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHJhc2hub0Bn'
 
 paths:
   /tasks:
@@ -297,6 +309,32 @@ paths:
             application/json:
               schema:
                 '$ref': '#/components/schemas/UserResponse'
+        '400':
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/ErrorResponse'
+
+  /auth/authenticate:
+    post:
+      summary: 'Get auth token'
+      description: 'Returns auth token based on e-mail and password'
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              '$ref': '#/components/schemas/AuthRequest'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/AuthResponse'
         '400':
           description: 'Bad Request'
           content:
