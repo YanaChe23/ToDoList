@@ -1,13 +1,11 @@
 package com.example.todolist.controllers;
 
-
 import com.example.todolist.api.v1.dto.DeadlineDto;
 import com.example.todolist.api.v1.dto.PaginationDto;
 import com.example.todolist.api.v1.dto.TaskRequestDto;
 import com.example.todolist.api.v1.dto.TaskResponseDto;
 
 import com.example.todolist.exceptions.ItemNotFoundException;
-import com.example.todolist.repositories.TaskRepository;
 import com.example.todolist.services.task.TaskServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -18,7 +16,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.test.context.support.WithMockUser;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +75,7 @@ class TasksControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void tasksPostTest() throws Exception {
         when(taskService.save(any(TaskRequestDto.class))).thenReturn(emailResponse);
 
@@ -88,6 +90,18 @@ class TasksControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
+    public void tasksPostUnauthorizedTest() throws Exception {
+        when(taskService.save(any(TaskRequestDto.class))).thenReturn(emailResponse);
+
+        mockMvc.perform(post("/tasks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(emailRequest)))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @WithMockUser
     public void tasksGetTest() throws Exception {
         this.mockMvc.perform(get("/tasks")
                 .param("offset", String.valueOf(0))
@@ -105,6 +119,16 @@ class TasksControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
+    public void tasksGetUnauthorizedTest() throws Exception {
+        this.mockMvc.perform(get("/tasks")
+                        .param("offset", String.valueOf(0))
+                        .param("limit", String.valueOf(10)))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @WithMockUser
     public void tasksGetNoTasksTest() throws Exception {
         when(taskService.get(any(PaginationDto.class))).thenReturn(new ArrayList<>());
         this.mockMvc.perform(get("/tasks")
@@ -115,6 +139,7 @@ class TasksControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void tasksGetNoPaginationTest() throws Exception {
         when(taskService.get(any(PaginationDto.class)))
                 .thenThrow(new ItemNotFoundException("Pagination is a required parameter. Please provide pagination."));
@@ -125,6 +150,7 @@ class TasksControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void tasksIdGetTest() throws Exception {
         when(taskService.findByIdDto(1L)).thenReturn(emailResponse);
         this.mockMvc.perform(get("/tasks/1"))
@@ -136,6 +162,15 @@ class TasksControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
+    public void tasksIdGetUnauthorizedTest() throws Exception {
+        when(taskService.findByIdDto(1L)).thenReturn(emailResponse);
+        this.mockMvc.perform(get("/tasks/1"))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @WithMockUser
     public void tasksIdGetNoTaskFoundTest() throws Exception {
         when(taskService.findByIdDto(1L)).thenThrow(new ItemNotFoundException("Can't find a task with anb id 1"));
         this.mockMvc.perform(get("/tasks/1"))
@@ -144,6 +179,7 @@ class TasksControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void tasksDeadlineDeadlineGetTest() throws Exception {
         when(taskService.findByDeadline(any(DeadlineDto.class))).thenReturn(responseDtos);
         this.mockMvc.perform(get("/tasks/deadline/TODAY"))
@@ -157,7 +193,16 @@ class TasksControllerTest {
                         "\"description\":\"Buy Dog Food\"," +
                         "\"deadline\":\"WEEK\"}]"));
     }
+
     @Test
+    @WithAnonymousUser
+    public void tasksDeadlineDeadlineGetUnauthorizedTest() throws Exception {
+        when(taskService.findByDeadline(any(DeadlineDto.class))).thenReturn(responseDtos);
+        this.mockMvc.perform(get("/tasks/deadline/TODAY"))
+                .andExpect(status().is4xxClientError());
+    }
+    @Test
+    @WithMockUser
     public void tasksIdPatchTest() throws Exception {
         when(taskService.edit(eq(1L), any(TaskRequestDto.class))).thenReturn(emailResponse);
         this.mockMvc.perform(patch("/tasks/1")
@@ -171,6 +216,17 @@ class TasksControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
+    public void tasksIdPatchUnauthorizedTest() throws Exception {
+        when(taskService.edit(eq(1L), any(TaskRequestDto.class))).thenReturn(emailResponse);
+        this.mockMvc.perform(patch("/tasks/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(emailRequest)))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @WithMockUser
     public void tasksIdPatchTaskNotFoundTest() throws Exception {
         when(taskService.edit(eq(1L), any(TaskRequestDto.class)))
                 .thenThrow(new ItemNotFoundException("Can't find a task with anb id 1"));
@@ -182,6 +238,7 @@ class TasksControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void tasksIdDeleteTest() throws Exception {
         when(taskService.deleteById(1L)).thenReturn("Task is deleted");
         this.mockMvc.perform(delete("/tasks/1"))
@@ -190,6 +247,15 @@ class TasksControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
+    public void tasksIdDeleteUnauthorizedTest() throws Exception {
+        when(taskService.deleteById(1L)).thenReturn("Task is deleted");
+        this.mockMvc.perform(delete("/tasks/1"))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @WithMockUser
     public void tasksIdDeleteTaskNotFoundTest() throws Exception {
         when(taskService.deleteById(1L)).thenThrow(new ItemNotFoundException("Can't find a task with anb id 1"));
         this.mockMvc.perform(delete("/tasks/1"))
