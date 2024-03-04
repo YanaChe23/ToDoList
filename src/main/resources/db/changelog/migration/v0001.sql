@@ -14,6 +14,6 @@ create table users (
 create table tasks (
     id int primary key unique default nextval('task_id_gen'),
     user_id int not null references users(id),
-    description text not null,
+    description text,
     deadline varchar(255)
 );
