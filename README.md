@@ -1,5 +1,5 @@
 # "To-do" list app
-An aplication to store and manage daily tasks.
+An application to store and manage daily tasks.
 
 ## Table of content 
  - [General info](#general-info) 
@@ -48,8 +48,8 @@ http://localhost:8080/swagger-ui/index.html#/
 - Testcontainers
 
 ## Features
-The application allows to perform CRUD operations with tasks, such as adding and deleting tasks, getting list of available tasks or searching by ID, filtering by deadline etc. 
-Please check API documentation for more information (awailable once application is up): http://localhost:8080/swagger-ui/index.html#/
+The application allows to perform CRUD operations with tasks, such as adding and deleting tasks, getting a list of available tasks or searching by ID, filtering by deadline, etc. 
+Please check API documentation for more information (available once the application is up): http://localhost:8080/swagger-ui/index.html#/
 
 ## Development status
 ##### Under Development
@@ -58,4 +58,4 @@ Please note that this application is currently under active development.
 All CRUD operations dedicated to tasks are available. 
 #####  Upcoming Features
 - User authorization; 
-- Multi-user capabilities: store tasks of sevral users.
+- Multi-user capabilities: store tasks of several users.
