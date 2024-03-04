@@ -1,6 +1,6 @@
 package com.example.todolist.configs.security;
 
-import com.example.todolist.services.jwt.JwtServiceImpl;
+import com.example.todolist.services.jwt.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +19,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
-    final private JwtServiceImpl jwtService;
+    final private JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
     @Override

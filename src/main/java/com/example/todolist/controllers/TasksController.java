@@ -5,6 +5,7 @@ import com.example.todolist.api.v1.dto.PaginationDto;
 import com.example.todolist.api.v1.dto.TaskRequestDto;
 import com.example.todolist.api.v1.dto.TaskResponseDto;
 import com.example.todolist.api.v1.rest.TasksApi;
+import com.example.todolist.services.task.TaskService;
 import com.example.todolist.services.task.TaskServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class TasksController implements TasksApi {
-    private final TaskServiceImpl taskServiceImpl;
+    private final TaskService taskServiceImpl;
 
     @Override
     public ResponseEntity<TaskResponseDto> tasksPost(TaskRequestDto taskRequestDto) {

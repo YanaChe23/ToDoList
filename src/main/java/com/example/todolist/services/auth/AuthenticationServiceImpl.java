@@ -2,7 +2,7 @@ package com.example.todolist.services.auth;
 
 import com.example.todolist.api.v1.dto.AuthRequestDto;
 import com.example.todolist.api.v1.dto.AuthResponseDto;
-import com.example.todolist.services.jwt.JwtServiceImpl;
+import com.example.todolist.services.jwt.JwtService;
 import com.example.todolist.exceptions.ItemNotFoundException;
 import com.example.todolist.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
-    private final JwtServiceImpl jwtService;
+    private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
     public AuthResponseDto authenticate(AuthRequestDto authRequestDto) {

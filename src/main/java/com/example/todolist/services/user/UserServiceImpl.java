@@ -3,14 +3,11 @@ package com.example.todolist.services.user;
 import com.example.todolist.api.v1.dto.UserRequestDto;
 import com.example.todolist.api.v1.dto.UserResponseDto;
 import com.example.todolist.entities.Role;
-import com.example.todolist.entities.Task;
 import com.example.todolist.entities.User;
 import com.example.todolist.exceptions.ItemNotFoundException;
 import com.example.todolist.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

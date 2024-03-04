@@ -29,7 +29,7 @@ public class ExceptionAdvice {
     }
 
     @ExceptionHandler(ItemNotFoundException.class)
-    public ResponseEntity<ExceptionData> handleItemNotFoundExceptionException(ItemNotFoundException exception) {
+    public ResponseEntity<ExceptionData> handleItemNotFoundException(ItemNotFoundException exception) {
         ExceptionData fileEntityIssue = new ExceptionData();
         fileEntityIssue.setInfo(exception.getMessage());
         return new ResponseEntity<>(fileEntityIssue, HttpStatus.NOT_FOUND);
