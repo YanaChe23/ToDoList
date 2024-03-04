@@ -2,10 +2,10 @@
 An application to store and manage daily tasks.
 
 ## Table of content 
- - [General info](#general-info) 
+ - [General info](#general-info)
+ - [How to install and run](#how-to-install-and-run)
  - [Technologies](#technologies)
  - [Features](#features)
- - [How to install and run](#how-to-install-and-run)
  
 ## General info
 "To-do" backend application that helps to store information about tasks and deadlines. It allows to add, remove, and change tasks in your "to-do" list. 
