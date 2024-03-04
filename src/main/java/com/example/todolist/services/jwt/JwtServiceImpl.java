@@ -1,40 +1,43 @@
 package com.example.todolist.services.jwt;
 
-import com.example.todolist.exceptions.AuthTokenParseException;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.SignedJWT;
-import lombok.RequiredArgsConstructor;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.GrantedAuthority;
 
-import java.text.ParseException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
 @Service
-@RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
-    private final JwtEncoder jwtEncoder;
-
-    public JWTClaimsSet parseToken(String token) {
-        try {
-            SignedJWT decodedJWT = SignedJWT.parse(token);
-            return decodedJWT.getJWTClaimsSet();
-        } catch (ParseException e) {
-            throw new AuthTokenParseException();
-        }
+    @Value("${security.secret}")
+    private String SECRET_KEY;
+    public String extractEmail(String token) {
+        return extractClaim(token, Claims::getSubject);
     }
 
-    public String extractEmail(String token) {
-        return parseToken(token).getSubject();
+    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(getSignKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    private SecretKey getSignKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String generateToken(UserDetails userDetails) {
@@ -42,19 +45,14 @@ public class JwtServiceImpl implements JwtService {
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        Instant now = Instant.now();
-        String scope = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
-
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plus(2, ChronoUnit.MINUTES))
+        return Jwts
+                .builder()
+                .claims(extraClaims)
                 .subject(userDetails.getUsername())
-                .claim("scope", scope)
-                .build();
-        return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 24))
+                .signWith(getSignKey())
+                .compact();
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
@@ -67,6 +65,6 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private Date extractExpiration(String token) {
-        return parseToken(token).getExpirationTime();
+        return extractClaim(token, Claims::getExpiration);
     }
 }
