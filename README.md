@@ -25,12 +25,12 @@ If you want to use the default key, run docker-compose.yml this way:
 
 If you want to provide a key, please add an environment variable SECRET_KEY:  
 - for macOS/Linux
-> export SECRET_KEY=place_your_key_here docker-compose up
+> export SECRET_KEY=place_your_key_here docker-compose up -d
 
 - for Windows in CMD: 
-> set SECRET_KEY=place_your_key_here && docker-compose up
+> set SECRET_KEY=place_your_key_here && docker-compose up -d
 
-Open API documentation to check if the project is started correctly: 
+Wait a couple of minutes and open API documentation to check if the project is started correctly: 
 http://localhost:8080/swagger-ui/index.html#/
 
 ## Technologies
