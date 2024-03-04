@@ -6,10 +6,9 @@ An application to store and manage daily tasks.
  - [Technologies](#technologies)
  - [Features](#features)
  - [How to install and run](#how-to-install-and-run)
- - [Development Status](#development-status)
  
 ## General info
-"To-do" backend application that helps to store information about tasks and deadlines. It allows to add, remove and change tasks in your "to-do" list. 
+"To-do" backend application that helps to store information about tasks and deadlines. It allows to add, remove, and change tasks in your "to-do" list. 
 
 ## How to install and run 
 Clone the repository: 
@@ -50,12 +49,3 @@ http://localhost:8080/swagger-ui/index.html#/
 ## Features
 The application allows to perform CRUD operations with tasks, such as adding and deleting tasks, getting a list of available tasks or searching by ID, filtering by deadline, etc. 
 Please check API documentation for more information (available once the application is up): http://localhost:8080/swagger-ui/index.html#/
-
-## Development status
-##### Under Development
-Please note that this application is currently under active development. 
-##### Available functionality 
-All CRUD operations dedicated to tasks are available. 
-#####  Upcoming Features
-- User authorization; 
-- Multi-user capabilities: store tasks of several users.
