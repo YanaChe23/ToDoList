@@ -4,8 +4,13 @@ info:
   version: 0.0.1
 
 components:
-  schemas:
+  securitySchemes:
+    bearerAuth:
+     type: http
+     scheme: bearer
+     bearerFormat: JWT
 
+  schemas:
     Pagination:
       type: object
       properties:
@@ -48,7 +53,6 @@ components:
           format: int64
           example: 115
 
-
     TaskResponse:
       type: object
       properties:
@@ -66,6 +70,52 @@ components:
         deadline:
           type: string
           example: 'today'
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 100
+        name:
+          type: string
+          example: 'Alex'
+        email:
+          format: email
+          example: 'abc@mail.com'
+
+    UserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: 'Alex'
+        email:
+          type: string
+          format: email
+          example: 'abc@mail.com'
+        password:
+          type: string
+          example: '1234'
+
+    AuthRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: 'abc@mail.com'
+        password:
+          type: string
+          example: '1234'
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHJhc2hub0Bn'
 
 paths:
   /tasks:
@@ -239,3 +289,55 @@ paths:
                 type: array
                 items:
                   '$ref': '#/components/schemas/TaskResponse'
+
+  /users/new:
+    post:
+      summary: 'Crate a user'
+      description: 'Registers a new user'
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              '$ref': '#/components/schemas/UserRequest'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/UserResponse'
+        '400':
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/ErrorResponse'
+
+  /auth/authenticate:
+    post:
+      summary: 'Get auth token'
+      description: 'Returns auth token based on e-mail and password'
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              '$ref': '#/components/schemas/AuthRequest'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/AuthResponse'
+        '400':
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/ErrorResponse'

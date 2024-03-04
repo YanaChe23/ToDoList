@@ -32,6 +32,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskResponseDto save(TaskRequestDto taskRequestDto) {
+        if (taskRequestDto.getUserId() == null) throw new UserIdRequiredException();
         Task task = taskDtoMapper.toEntity(taskRequestDto);
         return taskDtoMapper.toDto(saveToDatabase(task));
     }
