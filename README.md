@@ -16,10 +16,19 @@ Clone the repository:
 > git clone https://github.com/YanaChe23/ToDoList.git
 
 Go to the project folder:
-> cd ToDoList  
+> cd ToDoList
 
-Run docker-compose.yml:
+The app requires an encryption key for authorization. It's possible to run the app with a default key, however, it's also possible to provide the personal secret key to ensure a higher security level.
+
+If you want to use the default key, run docker-compose.yml this way: 
 > docker compose up -d 
+
+If you want to provide a key, please add an environment variable SECRET_KEY:  
+- for macOS/Linux
+> export SECRET_KEY=place_your_key_here docker-compose up
+
+- for Windows in CMD: 
+> set SECRET_KEY=place_your_key_here && docker-compose up
 
 Open API documentation to check if the project is started correctly: 
 http://localhost:8080/swagger-ui/index.html#/
@@ -30,6 +39,7 @@ http://localhost:8080/swagger-ui/index.html#/
 - Spring Boot 
 - Spring MVC
 - Spring Data JPA
+- Spring Security
 - Swagger Codegen 
 - Docker
 - PostgreSQL
